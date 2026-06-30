@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, AlertCircle, MessageCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,19 @@ import {
   enviarCotizacion,
   type CotizarState,
 } from "@/app/(site)/cotizar/actions";
+import { cn } from "@/lib/utils";
+
+const TIPOS = [
+  "Boda",
+  "Cumpleaños",
+  "Graduación",
+  "Corporativo",
+  "Feria / Expo",
+  "Festival",
+  "Municipal",
+  "Industrial / Faena",
+  "Otro",
+];
 
 function Field({
   label,
@@ -21,7 +34,7 @@ function Field({
   children,
 }: {
   label: string;
-  htmlFor: string;
+  htmlFor?: string;
   error?: string;
   children: React.ReactNode;
 }) {
@@ -34,6 +47,25 @@ function Field({
   );
 }
 
+function validar(name: string, value: string): string {
+  switch (name) {
+    case "tipo_evento":
+      return value.trim() ? "" : "Indica el tipo de evento";
+    case "fecha_evento":
+      return value ? "" : "Indica la fecha del evento";
+    case "ubicacion":
+      return value.trim().length >= 2 ? "" : "Indica la comuna o ubicación";
+    case "numero_personas":
+      return Number(value) > 0 ? "" : "Indica el número de personas";
+    case "nombre":
+      return value.trim().length >= 2 ? "" : "Indica tu nombre";
+    case "email":
+      return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value) ? "" : "Revisa el correo";
+    default:
+      return "";
+  }
+}
+
 export function CotizarForm({ whatsapp }: { whatsapp: string | null }) {
   const [state, formAction, pending] = useActionState<CotizarState, FormData>(
     enviarCotizacion,
@@ -42,9 +74,27 @@ export function CotizarForm({ whatsapp }: { whatsapp: string | null }) {
   const fe = state.fieldErrors ?? {};
   const wa = whatsapp ? `https://wa.me/${whatsapp.replace(/\D/g, "")}` : null;
 
+  const [tipo, setTipo] = useState("");
+  const [otro, setOtro] = useState("");
+  const tipoEvento = tipo === "Otro" ? otro : tipo;
+
+  // Fecha mínima = hoy (solo en cliente, evita usar Date en el render del servidor).
+  const [minFecha, setMinFecha] = useState("");
+  useEffect(() => {
+    setMinFecha(new Date().toISOString().slice(0, 10));
+  }, []);
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const onBlur = (e: React.FocusEvent<HTMLInputElement>) =>
+    setErrors((p) => ({
+      ...p,
+      [e.target.name]: validar(e.target.name, e.target.value),
+    }));
+  const err = (name: string) => errors[name] || fe[name];
+
   if (state.ok) {
     return (
-      <div className="flex flex-col items-start gap-4 rounded border border-gold/40 bg-gold/10 p-6">
+      <div className="flex flex-col items-start gap-4 rounded-2xl border border-gold/40 bg-gold/10 p-6">
         <CheckCircle2 className="size-8 text-gold-deep" aria-hidden />
         <h2 className="font-serif text-heading font-bold">
           ¡Recibimos tu solicitud!
@@ -67,7 +117,7 @@ export function CotizarForm({ whatsapp }: { whatsapp: string | null }) {
   return (
     <form action={formAction} className="flex flex-col gap-5">
       {state.error ? (
-        <p className="flex items-center gap-2 rounded-sm border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        <p className="flex items-center gap-2 rounded-xl border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
           <AlertCircle className="size-4 shrink-0" aria-hidden />
           {state.error}
         </p>
@@ -85,37 +135,69 @@ export function CotizarForm({ whatsapp }: { whatsapp: string | null }) {
         />
       </div>
 
-      <Field
-        label="Tipo de evento"
-        htmlFor="tipo_evento"
-        error={fe.tipo_evento}
-      >
-        <Input
-          id="tipo_evento"
-          name="tipo_evento"
-          placeholder="Boda, feria, festival, faena…"
-        />
+      {/* Tipo de evento por chips */}
+      <Field label="Tipo de evento" error={err("tipo_evento")}>
+        <input type="hidden" name="tipo_evento" value={tipoEvento} />
+        <div className="flex flex-wrap gap-2">
+          {TIPOS.map((t) => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => {
+                setTipo(t);
+                setErrors((p) => ({
+                  ...p,
+                  tipo_evento: validar("tipo_evento", t === "Otro" ? otro : t),
+                }));
+              }}
+              className={cn(
+                "rounded-full border px-3.5 py-1.5 text-sm transition-colors",
+                tipo === t
+                  ? "border-gold bg-gold text-ink-deep"
+                  : "border-input text-muted-foreground hover:border-gold/60 hover:text-foreground",
+              )}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+        {tipo === "Otro" ? (
+          <Input
+            value={otro}
+            onChange={(e) => setOtro(e.target.value)}
+            placeholder="¿Qué tipo de evento?"
+            className="mt-2"
+          />
+        ) : null}
       </Field>
 
       <div className="grid gap-5 sm:grid-cols-2">
         <Field
           label="Fecha del evento"
           htmlFor="fecha_evento"
-          error={fe.fecha_evento}
+          error={err("fecha_evento")}
         >
-          <Input id="fecha_evento" name="fecha_evento" type="date" />
+          <Input
+            id="fecha_evento"
+            name="fecha_evento"
+            type="date"
+            min={minFecha || undefined}
+            onBlur={onBlur}
+          />
         </Field>
         <Field
           label="N.º de personas"
           htmlFor="numero_personas"
-          error={fe.numero_personas}
+          error={err("numero_personas")}
         >
           <Input
             id="numero_personas"
             name="numero_personas"
             type="number"
+            inputMode="numeric"
             min={1}
             placeholder="120"
+            onBlur={onBlur}
           />
         </Field>
       </div>
@@ -124,9 +206,14 @@ export function CotizarForm({ whatsapp }: { whatsapp: string | null }) {
         <Field
           label="Comuna / ubicación"
           htmlFor="ubicacion"
-          error={fe.ubicacion}
+          error={err("ubicacion")}
         >
-          <Input id="ubicacion" name="ubicacion" placeholder="Comuna, región" />
+          <Input
+            id="ubicacion"
+            name="ubicacion"
+            placeholder="Comuna, región"
+            onBlur={onBlur}
+          />
         </Field>
         <Field label="Segmento (opcional)" htmlFor="segmento">
           <Select id="segmento" name="segmento" defaultValue="">
@@ -141,11 +228,22 @@ export function CotizarForm({ whatsapp }: { whatsapp: string | null }) {
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field label="Tu nombre" htmlFor="nombre" error={fe.nombre}>
-          <Input id="nombre" name="nombre" autoComplete="name" />
+        <Field label="Tu nombre" htmlFor="nombre" error={err("nombre")}>
+          <Input
+            id="nombre"
+            name="nombre"
+            autoComplete="name"
+            onBlur={onBlur}
+          />
         </Field>
-        <Field label="Correo" htmlFor="email" error={fe.email}>
-          <Input id="email" name="email" type="email" autoComplete="email" />
+        <Field label="Correo" htmlFor="email" error={err("email")}>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            onBlur={onBlur}
+          />
         </Field>
       </div>
 
