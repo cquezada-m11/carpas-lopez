@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { getConfiguracion } from "@/lib/content/queries";
 import { mediaUrl } from "@/lib/content/media";
 import { SiteNav, type NavItem } from "./site-nav";
@@ -19,16 +18,12 @@ export async function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-bone/90 backdrop-blur supports-[backdrop-filter]:bg-bone/75">
-      <div className="mx-auto flex h-16 w-full max-w-5xl items-center justify-between px-5 md:px-8">
+      <div className="mx-auto flex h-16 w-full max-w-5xl items-center justify-between px-5 md:h-20 md:px-8">
         <Link href="/" className="flex items-center gap-2" aria-label={nombre}>
           {logo ? (
-            <Image
-              src={logo}
-              alt={nombre}
-              width={140}
-              height={32}
-              className="h-8 w-auto"
-            />
+            // Logo subido por el admin: proporción natural, sin forzar ratio.
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={logo} alt={nombre} className="h-12 w-auto md:h-14" />
           ) : (
             <span className="font-serif text-lg font-bold tracking-tight text-foreground">
               {nombre}

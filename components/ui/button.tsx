@@ -17,6 +17,8 @@ const buttonVariants = cva(
         // Secundario — contorno sobre hueso ("Ver trabajos realizados")
         outline:
           "border border-input bg-transparent text-foreground hover:bg-foreground/5",
+        // Primario sobre fondo oscuro: invertido a hueso (no usa dorado de relleno)
+        inverted: "bg-bone text-ink hover:bg-bone-dark",
         // Sobre fondo oscuro (sección "Por qué elegirnos")
         "outline-dark":
           "border border-gold/40 bg-transparent text-bone hover:bg-bone/5",

@@ -72,7 +72,7 @@ export default async function HomePage() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             {ctaPrimario ? (
-              <Button asChild size="lg">
+              <Button asChild size="lg" variant="inverted">
                 <Link href={ctaPrimario.destino}>{ctaPrimario.texto}</Link>
               </Button>
             ) : null}
@@ -200,7 +200,7 @@ export default async function HomePage() {
             visita a terreno antes de confirmar.
           </p>
           <div className="flex flex-wrap justify-center gap-3">
-            <Button asChild size="lg">
+            <Button asChild size="lg" variant="inverted">
               <Link href="/cotizar">Solicitar cotización</Link>
             </Button>
             {wa ? (
