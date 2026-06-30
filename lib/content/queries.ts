@@ -2,6 +2,7 @@ import "server-only";
 import { cacheTag } from "next/cache";
 import { createPublicClient } from "@/lib/supabase/public";
 import type { Database } from "@/lib/supabase/database.types";
+import type { Segmento } from "@/lib/content/segmento";
 
 export type Proyecto = Database["public"]["Tables"]["proyectos"]["Row"];
 export type Servicio = Database["public"]["Tables"]["servicios"]["Row"];
@@ -94,4 +95,68 @@ export async function getProyectosDestacados(
     .order("fecha", { ascending: false, nullsFirst: false })
     .limit(limite);
   return ultimos ?? [];
+}
+
+/** Todos los proyectos publicados; opcionalmente filtrados por segmento (RF-10/11). */
+export async function getProyectosPublicados(
+  segmento?: Segmento,
+): Promise<Proyecto[]> {
+  "use cache";
+  cacheTag(CONTENT_TAGS.proyectos);
+  const supabase = createPublicClient();
+  let query = supabase.from("proyectos").select("*").eq("estado", "publicado");
+  if (segmento) query = query.eq("segmento", segmento);
+  const { data } = await query.order("fecha", {
+    ascending: false,
+    nullsFirst: false,
+  });
+  return data ?? [];
+}
+
+/** Proyecto publicado por slug; null si no existe o no está publicado. */
+export async function getProyectoPorSlug(
+  slug: string,
+): Promise<Proyecto | null> {
+  "use cache";
+  cacheTag(CONTENT_TAGS.proyectos);
+  const supabase = createPublicClient();
+  const { data } = await supabase
+    .from("proyectos")
+    .select("*")
+    .eq("estado", "publicado")
+    .eq("slug", slug)
+    .maybeSingle();
+  return data;
+}
+
+/** Slugs publicados para `generateStaticParams`. */
+export async function getSlugsPublicados(): Promise<string[]> {
+  "use cache";
+  cacheTag(CONTENT_TAGS.proyectos);
+  const supabase = createPublicClient();
+  const { data } = await supabase
+    .from("proyectos")
+    .select("slug")
+    .eq("estado", "publicado");
+  return (data ?? []).map((row) => row.slug);
+}
+
+/** Proyectos del mismo segmento, excluyendo el actual (sugerencias del detalle). */
+export async function getProyectosRelacionados(
+  segmento: Segmento,
+  excluirId: string,
+  limite = 3,
+): Promise<Proyecto[]> {
+  "use cache";
+  cacheTag(CONTENT_TAGS.proyectos);
+  const supabase = createPublicClient();
+  const { data } = await supabase
+    .from("proyectos")
+    .select("*")
+    .eq("estado", "publicado")
+    .eq("segmento", segmento)
+    .neq("id", excluirId)
+    .order("fecha", { ascending: false, nullsFirst: false })
+    .limit(limite);
+  return data ?? [];
 }
