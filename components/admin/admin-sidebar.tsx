@@ -34,8 +34,8 @@ const GROUPS: Group[] = [
   {
     label: "Configuración",
     items: [
-      { href: "/admin/general", label: "General", icon: Settings, soon: true },
-      { href: "/admin/home", label: "Home", icon: House, soon: true },
+      { href: "/admin/general", label: "General", icon: Settings },
+      { href: "/admin/home", label: "Home", icon: House },
       {
         href: "/admin/cotizaciones",
         label: "Cotizaciones",
