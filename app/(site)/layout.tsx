@@ -1,6 +1,8 @@
+import { Suspense } from "react";
 import { SiteHeader } from "@/components/site/site-header";
 import { SiteFooter } from "@/components/site/site-footer";
 import { LocalBusinessJsonLd } from "@/components/site/local-business-jsonld";
+import { WhatsappFab } from "@/components/site/whatsapp-fab";
 
 export default function SiteLayout({
   children,
@@ -21,6 +23,9 @@ export default function SiteLayout({
         {children}
       </main>
       <SiteFooter />
+      <Suspense fallback={null}>
+        <WhatsappFab />
+      </Suspense>
     </div>
   );
 }
