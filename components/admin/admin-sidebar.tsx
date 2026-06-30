@@ -28,12 +28,7 @@ const GROUPS: Group[] = [
     label: "Contenido",
     items: [
       { href: "/admin/proyectos", label: "Proyectos", icon: FolderOpen },
-      {
-        href: "/admin/servicios",
-        label: "Servicios",
-        icon: LayoutGrid,
-        soon: true,
-      },
+      { href: "/admin/servicios", label: "Servicios", icon: LayoutGrid },
     ],
   },
   {

@@ -3,6 +3,11 @@ import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/lib/supabase/database.types";
 
 export type ProyectoRow = Database["public"]["Tables"]["proyectos"]["Row"];
+export type ServicioRow = Database["public"]["Tables"]["servicios"]["Row"];
+export type CotizacionRow = Database["public"]["Tables"]["cotizaciones"]["Row"];
+export type ConfiguracionRow =
+  Database["public"]["Tables"]["configuracion_global"]["Row"];
+export type HomeRow = Database["public"]["Tables"]["home"]["Row"];
 
 /** Lista todos los proyectos (cualquier estado) para el panel; recientes primero. */
 export async function listProyectosAdmin(): Promise<ProyectoRow[]> {
@@ -25,6 +30,60 @@ export async function getProyectoAdmin(
     .eq("id", id)
     .maybeSingle();
   return data;
+}
+
+/** Lista todos los servicios (cualquier estado); por orden. */
+export async function listServiciosAdmin(): Promise<ServicioRow[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("servicios")
+    .select("*")
+    .order("orden", { ascending: true });
+  return data ?? [];
+}
+
+export async function getServicioAdmin(
+  id: string,
+): Promise<ServicioRow | null> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("servicios")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  return data;
+}
+
+/** Configuración global (singleton). */
+export async function getConfiguracionAdmin(): Promise<ConfiguracionRow | null> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("configuracion_global")
+    .select("*")
+    .eq("id", 1)
+    .maybeSingle();
+  return data;
+}
+
+/** Contenido del home (singleton). */
+export async function getHomeAdmin(): Promise<HomeRow | null> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("home")
+    .select("*")
+    .eq("id", 1)
+    .maybeSingle();
+  return data;
+}
+
+/** Cotizaciones recibidas (admin), recientes primero. */
+export async function listCotizacionesAdmin(): Promise<CotizacionRow[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("cotizaciones")
+    .select("*")
+    .order("created_at", { ascending: false });
+  return data ?? [];
 }
 
 /** Conteos para el dashboard del panel. */
