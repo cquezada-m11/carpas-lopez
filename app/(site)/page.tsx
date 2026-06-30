@@ -59,6 +59,7 @@ export default async function HomePage() {
   const diferenciadores = asArray<Diferenciador>(home?.diferenciadores);
   const pasos = asArray<Paso>(home?.pasos_proceso);
   const stats = asArray<{ valor: string; etiqueta: string }>(home?.stats);
+  const heroMedia = mediaUrl(home?.hero_media_path);
   const wa = config?.whatsapp
     ? `https://wa.me/${config.whatsapp.replace(/\D/g, "")}`
     : null;
@@ -66,8 +67,21 @@ export default async function HomePage() {
   return (
     <>
       {/* S2 — Hero */}
-      <section className="on-dark border-b border-gold/20 bg-ink text-bone">
-        <div className="mx-auto w-full max-w-5xl px-5 py-24 md:px-8 md:py-32">
+      <section className="on-dark relative overflow-hidden border-b border-gold/20 bg-ink text-bone">
+        {heroMedia ? (
+          <>
+            <Image
+              src={heroMedia}
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/75 to-ink/40" />
+          </>
+        ) : null}
+        <div className="relative mx-auto w-full max-w-5xl px-5 py-24 md:px-8 md:py-32">
           <Eyebrow tone="light">Arriendo · diseño · montaje de carpas</Eyebrow>
           <h1 className="mt-5 max-w-3xl text-balance font-serif text-display font-bold">
             {home?.hero_titulo ??

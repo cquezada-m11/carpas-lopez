@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { SingleImageField } from "@/components/admin/single-image-field";
 import { guardarHome, type HomeFormState } from "@/app/admin/home/actions";
 import type { HomeRow } from "@/lib/content/admin";
 
@@ -36,6 +37,9 @@ export function HomeForm({
 }) {
   const [heroTitulo, setHeroTitulo] = useState(home.hero_titulo);
   const [heroBajada, setHeroBajada] = useState(home.hero_bajada);
+  const [heroMedia, setHeroMedia] = useState<string | null>(
+    home.hero_media_path,
+  );
   const [ctaP, setCtaP] = useState<Cta>(parseCta(home.hero_cta_primario));
   const [ctaS, setCtaS] = useState<Cta>(parseCta(home.hero_cta_secundario));
   const [difs, setDifs] = useState<Diferenciador[]>(
@@ -77,6 +81,7 @@ export function HomeForm({
       const res = await guardarHome({
         hero_titulo: heroTitulo,
         hero_bajada: heroBajada,
+        hero_media_path: heroMedia,
         hero_cta_primario: ctaP,
         hero_cta_secundario: ctaS,
         diferenciadores: difs,
@@ -123,6 +128,18 @@ export function HomeForm({
             value={heroBajada}
             onChange={(e) => setHeroBajada(e.target.value)}
           />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <Label>Imagen de fondo</Label>
+          <SingleImageField
+            folder="home"
+            value={heroMedia}
+            onChange={setHeroMedia}
+          />
+          <p className="text-xs text-muted-foreground">
+            Se muestra detrás del hero con un degradado oscuro. Usa una foto
+            apaisada y de buena resolución.
+          </p>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="flex flex-col gap-2 rounded-sm border border-border p-3">

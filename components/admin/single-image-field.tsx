@@ -6,17 +6,34 @@ import { Upload, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { mediaUrl } from "@/lib/content/media";
 
-/** Campo de imagen única: sube a Storage y expone el path en un input oculto. */
+/**
+ * Campo de imagen única: sube a Storage y guarda el path.
+ * - Modo formulario (por defecto): expone el path en un input oculto `name`.
+ * - Modo controlado: pasa `value` + `onChange` y se omite el input oculto.
+ */
 export function SingleImageField({
   name,
   folder,
   initialPath,
+  accept = "image/*",
+  value,
+  onChange,
 }: {
-  name: string;
+  name?: string;
   folder: string;
-  initialPath: string | null;
+  initialPath?: string | null;
+  accept?: string;
+  value?: string | null;
+  onChange?: (path: string | null) => void;
 }) {
-  const [path, setPath] = useState<string | null>(initialPath);
+  const controlled = typeof onChange === "function";
+  const [internal, setInternal] = useState<string | null>(initialPath ?? null);
+  const path = controlled ? (value ?? null) : internal;
+  const setPath = (p: string | null) => {
+    if (controlled) onChange!(p);
+    else setInternal(p);
+  };
+
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const supabase = createClient();
@@ -41,9 +58,11 @@ export function SingleImageField({
 
   return (
     <div className="flex flex-col gap-2">
-      <input type="hidden" name={name} value={path ?? ""} />
+      {!controlled && name ? (
+        <input type="hidden" name={name} value={path ?? ""} />
+      ) : null}
       {url ? (
-        <div className="relative aspect-[16/10] w-full max-w-sm overflow-hidden rounded-sm border border-border bg-bone-dark">
+        <div className="relative aspect-[16/10] w-full max-w-sm overflow-hidden rounded-xl border border-border bg-bone-dark">
           <Image
             src={url}
             alt="Imagen"
@@ -55,18 +74,18 @@ export function SingleImageField({
             type="button"
             onClick={() => setPath(null)}
             aria-label="Quitar imagen"
-            className="absolute right-2 top-2 rounded-sm bg-ink/70 p-1 text-bone hover:bg-ink"
+            className="absolute right-2 top-2 rounded-full bg-ink/70 p-1 text-bone hover:bg-ink"
           >
             <X className="size-4" />
           </button>
         </div>
       ) : null}
-      <label className="inline-flex w-fit cursor-pointer items-center gap-2 rounded-sm border border-input px-3.5 py-2.5 text-sm font-semibold transition-colors hover:bg-foreground/5">
+      <label className="inline-flex w-fit cursor-pointer items-center gap-2 rounded-full border border-input px-3.5 py-2.5 text-sm font-semibold transition-colors hover:bg-foreground/5">
         <Upload className="size-4" aria-hidden />
         {uploading ? "Subiendo…" : url ? "Cambiar imagen" : "Subir imagen"}
         <input
           type="file"
-          accept="image/*"
+          accept={accept}
           className="hidden"
           disabled={uploading}
           onChange={(e) => onFile(e.target.files?.[0])}

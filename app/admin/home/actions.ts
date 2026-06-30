@@ -12,6 +12,7 @@ const Cta = z.object({ texto: z.string(), destino: z.string() });
 const HomeSchema = z.object({
   hero_titulo: z.string().min(1, "El titular del hero es obligatorio"),
   hero_bajada: z.string(),
+  hero_media_path: z.string().nullable(),
   hero_cta_primario: Cta,
   hero_cta_secundario: Cta,
   diferenciadores: z.array(
