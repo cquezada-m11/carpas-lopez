@@ -6,8 +6,8 @@ import { SiteNav, type NavItem } from "./site-nav";
 /** Navegación fija en código (RF-05: el admin no la modifica). */
 const NAV: NavItem[] = [
   { href: "/trabajos", label: "Trabajos" },
-  { href: "/#segmentos", label: "Segmentos" },
-  { href: "/#proceso", label: "Proceso" },
+  { href: "/servicios", label: "Servicios" },
+  { href: "/nosotros", label: "Nosotros" },
   { href: "/#contacto", label: "Contacto" },
 ];
 
