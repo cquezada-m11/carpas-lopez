@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
-import { ThemeProvider } from "next-themes";
+import { Libre_Caslon_Text, Manrope } from "next/font/google";
 import "./globals.css";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -9,14 +8,28 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Next.js and Supabase Starter Kit",
-  description: "The fastest way to build apps with Next.js and Supabase",
+  title: {
+    default: "Carpas López — Arriendo, diseño y montaje de carpas para eventos",
+    template: "%s · Carpas López",
+  },
+  description:
+    "Estructuras que sostienen tus mejores eventos. Asesoría en terreno, montaje puntual y seguridad estructural para celebraciones y grandes producciones.",
 };
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  display: "swap",
+// Títulos: serif clásica elegante (PRD §11.3, lado bodas/premium)
+const serif = Libre_Caslon_Text({
+  weight: ["400", "700"],
+  style: ["normal", "italic"],
   subsets: ["latin"],
+  display: "swap",
+  variable: "--font-serif",
+});
+
+// Cuerpo: sans legible (lado corporativo)
+const sans = Manrope({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-sans",
 });
 
 export default function RootLayout({
@@ -25,17 +38,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.className} antialiased`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
-      </body>
+    <html lang="es-CL" className={`${serif.variable} ${sans.variable}`}>
+      <body className="min-h-screen bg-bone-dark">{children}</body>
     </html>
   );
 }

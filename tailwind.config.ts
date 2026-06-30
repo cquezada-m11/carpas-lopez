@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import tailwindcssAnimate from "tailwindcss-animate";
 
 export default {
   darkMode: ["class"],
@@ -10,6 +11,17 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["var(--font-sans)", "system-ui", "-apple-system", "sans-serif"],
+        serif: ["var(--font-serif)", "Georgia", "Cambria", "serif"],
+        mono: [
+          "var(--font-mono)",
+          "SFMono-Regular",
+          "ui-monospace",
+          "Menlo",
+          "monospace",
+        ],
+      },
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
@@ -44,20 +56,44 @@ export default {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        chart: {
-          "1": "hsl(var(--chart-1))",
-          "2": "hsl(var(--chart-2))",
-          "3": "hsl(var(--chart-3))",
-          "4": "hsl(var(--chart-4))",
-          "5": "hsl(var(--chart-5))",
+        // --- Tokens de marca Carpas López ---
+        ink: {
+          DEFAULT: "hsl(var(--ink))",
+          deep: "hsl(var(--ink-deep))",
         },
+        bone: {
+          DEFAULT: "hsl(var(--bone))",
+          dark: "hsl(var(--bone-dark))",
+          alt: "hsl(var(--bone-alt))",
+        },
+        gold: {
+          DEFAULT: "hsl(var(--gold))",
+          deep: "hsl(var(--gold-deep))",
+          light: "hsl(var(--gold-light))",
+        },
+      },
+      fontSize: {
+        // Eyebrow / kicker mono en versalitas (patrón recurrente del diseño)
+        eyebrow: ["0.625rem", { lineHeight: "1", letterSpacing: "0.2em" }],
+        // Escala display serif (hero / títulos de sección), responsive-friendly
+        display: [
+          "clamp(2.25rem, 6vw, 3.5rem)",
+          { lineHeight: "1.05", letterSpacing: "-0.01em" },
+        ],
+        "heading-lg": ["clamp(1.75rem, 4vw, 2.5rem)", { lineHeight: "1.12" }],
+        heading: ["clamp(1.5rem, 3vw, 1.875rem)", { lineHeight: "1.15" }],
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        sm: "2px",
+      },
+      boxShadow: {
+        card: "0 1px 0 0 hsl(var(--border))",
+        elevated:
+          "0 30px 70px -28px rgba(0,0,0,0.45), 0 0 0 1px rgba(0,0,0,0.04)",
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [tailwindcssAnimate],
 } satisfies Config;

@@ -1,0 +1,16 @@
+# Build / deps
+node_modules
+.next
+out
+build
+next-env.d.ts
+
+# Lockfiles
+package-lock.json
+
+# Diseño y referencias (no formatear)
+docs/
+
+# Misc
+*.min.js
+.vercel
