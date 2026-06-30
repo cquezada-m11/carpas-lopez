@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
 import { Libre_Caslon_Text, Manrope } from "next/font/google";
+import { siteUrl } from "@/lib/site";
 import "./globals.css";
 
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
-
 export const metadata: Metadata = {
-  metadataBase: new URL(defaultUrl),
+  metadataBase: new URL(siteUrl()),
   title: {
     default: "Carpas López — Arriendo, diseño y montaje de carpas para eventos",
     template: "%s · Carpas López",

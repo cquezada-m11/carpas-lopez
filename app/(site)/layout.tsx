@@ -1,5 +1,6 @@
 import { SiteHeader } from "@/components/site/site-header";
 import { SiteFooter } from "@/components/site/site-footer";
+import { LocalBusinessJsonLd } from "@/components/site/local-business-jsonld";
 
 export default function SiteLayout({
   children,
@@ -8,6 +9,7 @@ export default function SiteLayout({
 }) {
   return (
     <div className="flex min-h-screen flex-col bg-bone">
+      <LocalBusinessJsonLd />
       <SiteHeader />
       <main className="flex-1">{children}</main>
       <SiteFooter />
