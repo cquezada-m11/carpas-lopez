@@ -54,7 +54,10 @@ relleno** (ver PRD §11). Light-only por marca; las secciones oscuras usan `bg-i
 * **Tipografía:** `Libre Caslon Text` (serif, títulos) + `Manrope` (sans, cuerpo) +
   mono para _eyebrows_. Escalas: `text-display`, `text-heading-lg`, `text-heading`,
   `text-eyebrow`.
-* **Radios:** botones/inputs/badges `rounded-sm` (2px); cards `rounded` (4px).
+* **Radios (modernos):** botones y badges/chips son _pill_ (`rounded-full`);
+  inputs/select/textarea `rounded-xl` (20px); cards `rounded` (16px) o
+  `rounded-2xl` (24px) para las destacadas. Escala base en `tailwind.config.ts`
+  (`--radius` = 16px).
 * **Primitivos de marca:** `components/ds/` → `Eyebrow`, `Section` (tonos
   bone/alt/dark/white), `SectionHeading`, `OrnamentDivider`, `Stat`/`StatRow`.
   Importar desde `@/components/ds`.

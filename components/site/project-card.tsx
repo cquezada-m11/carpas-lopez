@@ -21,7 +21,7 @@ export function ProjectCard({ proyecto }: { proyecto: Proyecto }) {
   return (
     <Link
       href={`/trabajos/${proyecto.slug}`}
-      className="group block overflow-hidden rounded border border-border bg-card shadow-card transition-shadow hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      className="group block overflow-hidden rounded-2xl border border-border bg-card shadow-card transition-shadow hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-bone-dark">
         {cover ? (

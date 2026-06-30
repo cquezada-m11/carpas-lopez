@@ -83,10 +83,18 @@ export default {
         "heading-lg": ["clamp(1.75rem, 4vw, 2.5rem)", { lineHeight: "1.12" }],
         heading: ["clamp(1.5rem, 3vw, 1.875rem)", { lineHeight: "1.15" }],
       },
+      // Escala redondeada/moderna. Botones y badges usan `rounded-full` (pill);
+      // inputs `rounded-xl`; cards `rounded` (16px) o `rounded-2xl` (24px).
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "2px",
+        none: "0",
+        sm: "0.625rem", // 10px — elementos pequeños, miniaturas
+        DEFAULT: "1rem", // 16px — cards
+        md: "0.75rem", // 12px
+        lg: "var(--radius)", // 16px
+        xl: "1.25rem", // 20px — inputs, paneles
+        "2xl": "1.5rem", // 24px — cards destacadas
+        "3xl": "2rem",
+        full: "9999px",
       },
       boxShadow: {
         card: "0 1px 0 0 hsl(var(--border))",

@@ -23,7 +23,7 @@ export function ServiceCard({
   return (
     <Link
       href={href}
-      className="group flex flex-col gap-4 rounded border border-border bg-card p-5 shadow-card transition-shadow hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      className="group flex flex-col gap-5 rounded-2xl border border-border bg-card p-6 shadow-card transition-shadow hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
       {imagen ? (
         <div className="relative aspect-[16/10] overflow-hidden rounded-sm bg-bone-dark">

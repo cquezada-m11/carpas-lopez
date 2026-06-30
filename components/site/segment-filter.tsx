@@ -7,7 +7,7 @@ import {
 import { cn } from "@/lib/utils";
 
 const chipBase =
-  "rounded-sm border px-3 py-1.5 font-mono text-eyebrow uppercase transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+  "rounded-full border px-3.5 py-1.5 font-mono text-eyebrow uppercase transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
 function chipClass(isActive: boolean) {
   return cn(

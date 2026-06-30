@@ -55,7 +55,7 @@
     --input: 43 24% 72%; /* #c9bfa6 — bordes de campos */
     --ring: var(--gold);
 
-    --radius: 0.25rem; /* 4px — cards. Los botones usan rounded-sm (2px). */
+    --radius: 1rem; /* 16px — radio base moderno (cards). Botones y badges usan pill. */
 
     /* Mono para eyebrows/kickers (el prototipo usa SF Mono) */
     --font-mono: "SFMono-Regular", ui-monospace, "SF Mono", Menlo, monospace;
