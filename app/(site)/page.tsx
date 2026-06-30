@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Eyebrow,
   Section,
@@ -11,6 +10,7 @@ import {
 import { ServiceCard } from "@/components/site/service-card";
 import { ProjectCard } from "@/components/site/project-card";
 import { FeatureIcon } from "@/components/site/feature-icon";
+import { TentIcon } from "@/components/site/tent-icon";
 import {
   getConfiguracion,
   getHome,
@@ -37,7 +37,28 @@ function asArray<T>(value: unknown): T[] {
   return Array.isArray(value) ? (value as T[]) : [];
 }
 
-const CATALOGO = ["Transparente", "Estructural", "Pagoda", "Galpón"];
+const CATALOGO = [
+  {
+    key: "transparente",
+    nombre: "Transparente",
+    desc: "Cristal para bodas y cenas de gala; el cielo a la vista y un montaje impecable.",
+  },
+  {
+    key: "estructural",
+    nombre: "Estructural",
+    desc: "Aluminio modular de gran luz para ferias, expos y producciones de escala.",
+  },
+  {
+    key: "pagoda",
+    nombre: "Pagoda",
+    desc: "Módulos de 3×3 a 5×5: ideales para accesos, stands y zonas VIP.",
+  },
+  {
+    key: "galpon",
+    nombre: "Galpón",
+    desc: "Cobertura industrial para bodegaje temporal, faenas y obra.",
+  },
+];
 
 export default async function HomePage() {
   const [config, home, servicios] = await Promise.all([
@@ -106,18 +127,42 @@ export default async function HomePage() {
         </div>
       </Section>
 
-      {/* Catálogo de carpas (chips) */}
-      <Section
-        tone="alt"
-        innerClassName="flex flex-col items-center gap-5 py-12 md:py-14"
-      >
-        <Eyebrow>Catálogo de carpas</Eyebrow>
-        <div className="flex flex-wrap justify-center gap-3">
-          {CATALOGO.map((c) => (
-            <Badge key={c} variant="outline">
-              {c}
-            </Badge>
+      {/* Catálogo de carpas */}
+      <Section tone="alt" id="catalogo">
+        <div className="flex flex-col items-center text-center">
+          <SectionHeading eyebrow="Catálogo de carpas" className="items-center">
+            Una estructura para cada montaje.
+          </SectionHeading>
+          <p className="mt-4 max-w-xl text-muted-foreground">
+            Trabajamos distintos tipos de carpa según el evento, la superficie y
+            la imagen que buscas. Te recomendamos la indicada en la visita.
+          </p>
+        </div>
+
+        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {CATALOGO.map((tipo) => (
+            <div
+              key={tipo.key}
+              className="flex flex-col items-start gap-4 rounded-2xl border border-border bg-card p-6 shadow-card transition-shadow hover:shadow-elevated"
+            >
+              <span className="flex size-14 items-center justify-center rounded-2xl bg-ink text-gold">
+                <TentIcon name={tipo.key} className="size-8" />
+              </span>
+              <h3 className="font-serif text-lg font-bold text-foreground">
+                {tipo.nombre}
+              </h3>
+              <p className="text-sm text-muted-foreground">{tipo.desc}</p>
+            </div>
           ))}
+        </div>
+
+        <div className="mt-10 flex flex-col items-center gap-4 text-center">
+          <p className="text-sm text-muted-foreground">
+            ¿No sabes cuál necesitas? Te asesoramos en terreno antes de cotizar.
+          </p>
+          <Button asChild variant="outline">
+            <Link href="/cotizar">Pide asesoría</Link>
+          </Button>
         </div>
       </Section>
 
