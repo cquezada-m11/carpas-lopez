@@ -66,8 +66,8 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* S2 — Hero */}
-      <section className="on-dark relative overflow-hidden border-b border-gold/20 bg-ink text-bone">
+      {/* S2 — Hero (alto completo del viewport, menos el header sticky) */}
+      <section className="on-dark relative flex min-h-[calc(100svh-4rem)] overflow-hidden border-b border-gold/20 bg-ink text-bone md:min-h-[calc(100svh-5rem)]">
         {heroMedia ? (
           <>
             <Image
@@ -81,7 +81,7 @@ export default async function HomePage() {
             <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/75 to-ink/40" />
           </>
         ) : null}
-        <div className="relative mx-auto w-full max-w-5xl px-5 py-24 md:px-8 md:py-32">
+        <div className="relative mx-auto flex w-full max-w-5xl flex-col justify-center px-5 py-20 md:px-8">
           <Eyebrow tone="light">Arriendo · diseño · montaje de carpas</Eyebrow>
           <h1 className="mt-5 max-w-3xl text-balance font-serif text-display font-bold">
             {home?.hero_titulo ??
