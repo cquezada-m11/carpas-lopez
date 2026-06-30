@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { getHomeAdmin } from "@/lib/content/admin";
+import { getHomeAdmin, listProyectosPublicadosMin } from "@/lib/content/admin";
 import { HomeForm } from "@/components/admin/home-form";
 
 export default function HomeAdminPage() {
@@ -19,7 +19,10 @@ export default function HomeAdminPage() {
 }
 
 async function Editor() {
-  const home = await getHomeAdmin();
+  const [home, proyectos] = await Promise.all([
+    getHomeAdmin(),
+    listProyectosPublicadosMin(),
+  ]);
   if (!home) {
     return (
       <p className="text-muted-foreground">
@@ -27,5 +30,5 @@ async function Editor() {
       </p>
     );
   }
-  return <HomeForm home={home} />;
+  return <HomeForm home={home} proyectos={proyectos} />;
 }

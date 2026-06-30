@@ -28,6 +28,13 @@ const HomeSchema = z.object({
       texto: z.string(),
     }),
   ),
+  stats: z.array(
+    z.object({
+      valor: z.string().min(1, "Cada cifra necesita un valor"),
+      etiqueta: z.string(),
+    }),
+  ),
+  proyectos_destacados: z.array(z.string().uuid()),
 });
 
 export type HomePayload = z.infer<typeof HomeSchema>;

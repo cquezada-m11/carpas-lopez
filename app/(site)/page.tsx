@@ -74,6 +74,7 @@ export default async function HomePage() {
   const ctaSecundario = asCta(home?.hero_cta_secundario);
   const diferenciadores = asArray<Diferenciador>(home?.diferenciadores);
   const pasos = asArray<Paso>(home?.pasos_proceso);
+  const stats = asArray<{ valor: string; etiqueta: string }>(home?.stats);
   const wa = config?.whatsapp
     ? `https://wa.me/${config.whatsapp.replace(/\D/g, "")}`
     : null;
@@ -107,13 +108,19 @@ export default async function HomePage() {
       </section>
 
       {/* Barra de cifras */}
-      <Section tone="alt" innerClassName="py-10 md:py-12">
-        <StatRow className="mx-auto max-w-2xl">
-          <Stat value="+15" label="años de experiencia" />
-          <Stat value="200+" label="eventos al año" />
-          <Stat value="RM·V" label="regiones de cobertura" />
-        </StatRow>
-      </Section>
+      {stats.length > 0 ? (
+        <Section tone="alt" innerClassName="py-10 md:py-12">
+          <StatRow className="mx-auto max-w-2xl">
+            {stats.map((s) => (
+              <Stat
+                key={s.etiqueta || s.valor}
+                value={s.valor}
+                label={s.etiqueta}
+              />
+            ))}
+          </StatRow>
+        </Section>
+      ) : null}
 
       {/* S3 — Segmentos / Servicios */}
       <Section tone="bone" id="segmentos">

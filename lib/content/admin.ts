@@ -88,6 +88,19 @@ export async function getConfiguracionAdmin(): Promise<ConfiguracionRow | null> 
   return data;
 }
 
+/** Proyectos publicados (id + título) para el selector de destacados. */
+export async function listProyectosPublicadosMin(): Promise<
+  { id: string; titulo: string }[]
+> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("proyectos")
+    .select("id, titulo")
+    .eq("estado", "publicado")
+    .order("fecha", { ascending: false, nullsFirst: false });
+  return data ?? [];
+}
+
 /** Contenido del home (singleton). */
 export async function getHomeAdmin(): Promise<HomeRow | null> {
   const supabase = await createClient();

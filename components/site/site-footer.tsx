@@ -85,8 +85,11 @@ export async function SiteFooter() {
       </div>
 
       <div className="border-t border-gold/20">
-        <div className="mx-auto w-full max-w-5xl px-5 py-5 text-xs text-muted-foreground md:px-8">
-          © {nombre}. Todos los derechos reservados.
+        <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-2 px-5 py-5 text-xs text-muted-foreground md:px-8">
+          <span>© {nombre}. Todos los derechos reservados.</span>
+          <Link href="/privacidad" className="hover:text-gold">
+            Política de privacidad
+          </Link>
         </div>
       </div>
     </footer>

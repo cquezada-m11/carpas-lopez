@@ -167,6 +167,11 @@ export function CotizarForm({ whatsapp }: { whatsapp: string | null }) {
       </Button>
       <p className="text-xs text-muted-foreground">
         Al enviar aceptas que te contactemos para gestionar tu solicitud.
+        Consulta nuestra{" "}
+        <Link href="/privacidad" className="underline hover:text-gold-deep">
+          política de privacidad
+        </Link>
+        .
       </p>
     </form>
   );
