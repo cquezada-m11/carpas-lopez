@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -6,6 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Section, SectionHeading, OrnamentDivider } from "@/components/ds";
 import { ProjectCard } from "@/components/site/project-card";
+import {
+  ProjectGallery,
+  type GalleryImage,
+} from "@/components/site/project-gallery";
 import {
   getProyectoPorSlug,
   getProyectosRelacionados,
@@ -80,8 +83,21 @@ export default async function ProyectoPage({
   const proyecto = await getProyectoPorSlug(slug);
   if (!proyecto) notFound();
 
-  const imagenes = galeriaItems(proyecto.galeria);
-  const portada = coverUrl(proyecto);
+  const portadaUrl = coverUrl(proyecto);
+  const galleryImages: GalleryImage[] = galeriaItems(proyecto.galeria)
+    .map((g) => ({
+      url: mediaUrl(g.path) ?? "",
+      alt: g.alt ?? proyecto.titulo,
+    }))
+    .filter((x) => x.url !== "");
+  // La portada elegida va primero.
+  if (portadaUrl) {
+    const idx = galleryImages.findIndex((x) => x.url === portadaUrl);
+    if (idx > 0) {
+      const [p] = galleryImages.splice(idx, 1);
+      galleryImages.unshift(p);
+    }
+  }
   const ficha = fichaTecnica(proyecto);
   const relacionados = await getProyectosRelacionados(
     proyecto.segmento,
@@ -108,23 +124,18 @@ export default async function ProyectoPage({
           ) : null}
         </div>
 
-        {/* Portada */}
-        <div className="relative mt-8 aspect-[16/9] overflow-hidden rounded bg-bone-dark">
-          {portada ? (
-            <Image
-              src={portada}
-              alt={proyecto.titulo}
-              fill
-              priority
-              sizes="(min-width: 1024px) 64rem, 100vw"
-              className="object-cover"
-            />
+        {/* Galería con lightbox */}
+        <div className="mt-8">
+          {galleryImages.length > 0 ? (
+            <ProjectGallery images={galleryImages} />
           ) : (
-            <div className="flex h-full w-full flex-col items-center justify-center gap-3 text-gold-deep/60">
-              <span className="size-3 rotate-45 bg-gold/70" />
-              <span className="font-mono text-eyebrow uppercase">
-                Galería en preparación
-              </span>
+            <div className="relative aspect-[16/9] overflow-hidden rounded bg-bone-dark">
+              <div className="flex h-full w-full flex-col items-center justify-center gap-3 text-gold-deep/60">
+                <span className="size-3 rotate-45 bg-gold/70" />
+                <span className="font-mono text-eyebrow uppercase">
+                  Galería en preparación
+                </span>
+              </div>
             </div>
           )}
         </div>
@@ -142,30 +153,6 @@ export default async function ProyectoPage({
                 {proyecto.ubicacion ? ` en ${proyecto.ubicacion}` : ""}.
               </p>
             )}
-
-            {/* Galería complementaria */}
-            {imagenes.length > 1 ? (
-              <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
-                {imagenes.slice(1).map((img, i) => {
-                  const url = mediaUrl(img.path);
-                  if (!url) return null;
-                  return (
-                    <div
-                      key={img.path}
-                      className="relative aspect-[4/3] overflow-hidden rounded-sm bg-bone-dark"
-                    >
-                      <Image
-                        src={url}
-                        alt={img.alt ?? `${proyecto.titulo} — foto ${i + 2}`}
-                        fill
-                        sizes="(min-width: 768px) 33vw, 50vw"
-                        className="object-cover"
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-            ) : null}
           </div>
 
           <aside className="lg:sticky lg:top-24 lg:self-start">
