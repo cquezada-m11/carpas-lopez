@@ -1,0 +1,138 @@
+"use client";
+
+import { useActionState } from "react";
+import { AlertCircle, CheckCircle2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { SEGMENTOS, segmentoLabel } from "@/lib/content/segmento";
+import {
+  updateTestimonio,
+  type TestimonioFormState,
+} from "@/app/admin/testimonios/actions";
+import type { TestimonioRow } from "@/lib/content/admin";
+
+const ESTADOS = ["borrador", "publicado", "archivado"] as const;
+
+function Field({
+  label,
+  htmlFor,
+  children,
+}: {
+  label: string;
+  htmlFor?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <Label htmlFor={htmlFor}>{label}</Label>
+      {children}
+    </div>
+  );
+}
+
+export function TestimonioForm({ testimonio }: { testimonio: TestimonioRow }) {
+  const [state, formAction, pending] = useActionState<
+    TestimonioFormState,
+    FormData
+  >(updateTestimonio.bind(null, testimonio.id), {});
+
+  return (
+    <form action={formAction} className="flex flex-col gap-6">
+      {state.error ? (
+        <p className="flex items-center gap-2 rounded-sm border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          <AlertCircle className="size-4 shrink-0" aria-hidden />
+          {state.error}
+        </p>
+      ) : null}
+      {state.ok ? (
+        <p className="flex items-center gap-2 rounded-sm border border-gold/40 bg-gold/10 px-3 py-2 text-sm text-gold-deep">
+          <CheckCircle2 className="size-4 shrink-0" aria-hidden />
+          Cambios guardados.
+        </p>
+      ) : null}
+
+      <Field label="Testimonio" htmlFor="texto">
+        <Textarea
+          id="texto"
+          name="texto"
+          rows={4}
+          defaultValue={testimonio.texto}
+        />
+      </Field>
+
+      <div className="grid gap-6 sm:grid-cols-2">
+        <Field label="Autor" htmlFor="autor">
+          <Input
+            id="autor"
+            name="autor"
+            defaultValue={testimonio.autor}
+            required
+          />
+        </Field>
+        <Field label="Cargo" htmlFor="cargo">
+          <Input
+            id="cargo"
+            name="cargo"
+            defaultValue={testimonio.cargo ?? ""}
+            placeholder="Productora, novios, encargado…"
+          />
+        </Field>
+      </div>
+
+      <div className="grid gap-6 sm:grid-cols-2">
+        <Field label="Empresa / organización" htmlFor="empresa">
+          <Input
+            id="empresa"
+            name="empresa"
+            defaultValue={testimonio.empresa ?? ""}
+          />
+        </Field>
+        <Field label="Segmento" htmlFor="segmento">
+          <Select
+            id="segmento"
+            name="segmento"
+            defaultValue={testimonio.segmento ?? ""}
+          >
+            <option value="">Sin segmento</option>
+            {SEGMENTOS.map((s) => (
+              <option key={s} value={s}>
+                {segmentoLabel[s]}
+              </option>
+            ))}
+          </Select>
+        </Field>
+      </div>
+
+      <div className="grid gap-6 sm:grid-cols-2">
+        <Field label="Estado" htmlFor="estado">
+          <Select id="estado" name="estado" defaultValue={testimonio.estado}>
+            {ESTADOS.map((e) => (
+              <option key={e} value={e}>
+                {e}
+              </option>
+            ))}
+          </Select>
+        </Field>
+        <Field label="Orden" htmlFor="orden">
+          <Input
+            id="orden"
+            name="orden"
+            type="number"
+            min={0}
+            defaultValue={testimonio.orden}
+            className="max-w-32"
+          />
+        </Field>
+      </div>
+
+      <div className="flex items-center justify-end gap-3 border-t border-border pt-4">
+        <Button type="submit" disabled={pending}>
+          {pending ? "Guardando…" : "Guardar cambios"}
+        </Button>
+      </div>
+    </form>
+  );
+}

@@ -7,6 +7,7 @@ import {
   FolderOpen,
   LayoutGrid,
   Tent,
+  MessageSquareQuote,
   Settings,
   House,
   Inbox,
@@ -32,6 +33,11 @@ const GROUPS: Group[] = [
       { href: "/admin/proyectos", label: "Proyectos", icon: FolderOpen },
       { href: "/admin/servicios", label: "Servicios", icon: LayoutGrid },
       { href: "/admin/tipos-carpa", label: "Tipos de carpa", icon: Tent },
+      {
+        href: "/admin/testimonios",
+        label: "Testimonios",
+        icon: MessageSquareQuote,
+      },
     ],
   },
   {

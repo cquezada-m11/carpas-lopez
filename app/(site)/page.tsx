@@ -20,6 +20,7 @@ import {
   getServiciosPublicados,
   getProyectosDestacados,
   getTiposCarpaPublicados,
+  getTestimoniosPublicados,
 } from "@/lib/content/queries";
 
 type Cta = { texto: string; destino: string };
@@ -42,11 +43,12 @@ function asArray<T>(value: unknown): T[] {
 }
 
 export default async function HomePage() {
-  const [config, home, servicios, tipos] = await Promise.all([
+  const [config, home, servicios, tipos, testimonios] = await Promise.all([
     getConfiguracion(),
     getHome(),
     getServiciosPublicados(),
     getTiposCarpaPublicados(),
+    getTestimoniosPublicados(),
   ]);
   const destacados = await getProyectosDestacados(
     home?.proyectos_destacados ?? [],
@@ -255,6 +257,39 @@ export default async function HomePage() {
           ))}
         </ol>
       </Section>
+
+      {/* Testimonios */}
+      {testimonios.length > 0 ? (
+        <Section tone="bone" id="testimonios">
+          <SectionHeading eyebrow="Testimonios">
+            Lo que dicen quienes ya montaron con nosotros.
+          </SectionHeading>
+          <div className="mt-10 grid gap-5 md:grid-cols-3">
+            {testimonios.map((t) => (
+              <figure
+                key={t.id}
+                className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-6 shadow-card"
+              >
+                <span
+                  aria-hidden
+                  className="font-serif text-5xl leading-[0.4] text-gold-deep"
+                >
+                  &ldquo;
+                </span>
+                <blockquote className="text-pretty text-foreground/90">
+                  {t.texto}
+                </blockquote>
+                <figcaption className="mt-auto">
+                  <div className="font-semibold text-foreground">{t.autor}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {[t.cargo, t.empresa].filter(Boolean).join(" · ")}
+                  </div>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </Section>
+      ) : null}
 
       {/* S8 — Cotización (CTA) */}
       <Section tone="dark" id="cotizar">
