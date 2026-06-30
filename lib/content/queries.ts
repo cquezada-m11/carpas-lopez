@@ -1,5 +1,5 @@
 import "server-only";
-import { unstable_cacheTag as cacheTag } from "next/cache";
+import { cacheTag } from "next/cache";
 import { createPublicClient } from "@/lib/supabase/public";
 import type { Database } from "@/lib/supabase/database.types";
 
