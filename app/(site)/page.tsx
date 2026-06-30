@@ -236,14 +236,26 @@ export default async function HomePage() {
         <SectionHeading eyebrow="Por qué elegirnos" tone="dark">
           La confianza se monta antes que la carpa.
         </SectionHeading>
-        <div className="mt-10 grid gap-px overflow-hidden rounded border border-gold/20 bg-gold/20 md:grid-cols-3">
-          {diferenciadores.map((d) => (
-            <div key={d.titulo} className="flex flex-col gap-4 bg-ink p-6">
-              <FeatureIcon name={d.icono} className="size-7 text-gold" />
-              <h3 className="font-serif text-lg font-bold text-bone">
+        <div className="mt-12 grid gap-5 md:grid-cols-3">
+          {diferenciadores.map((d, i) => (
+            <div
+              key={d.titulo}
+              className="group relative flex flex-col gap-5 rounded-2xl border border-gold/15 bg-ink-deep p-7 transition-all duration-300 hover:-translate-y-1 hover:border-gold/40"
+            >
+              <div className="flex items-center justify-between">
+                <span className="flex size-12 items-center justify-center rounded-full bg-gold/10 text-gold ring-1 ring-gold/30 transition-colors group-hover:bg-gold group-hover:text-ink-deep">
+                  <FeatureIcon name={d.icono} className="size-6" />
+                </span>
+                <span className="font-serif text-2xl italic text-gold/30">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+              </div>
+              <h3 className="font-serif text-xl font-bold text-bone">
                 {d.titulo}
               </h3>
-              <p className="text-sm text-muted-foreground">{d.texto}</p>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                {d.texto}
+              </p>
             </div>
           ))}
         </div>
@@ -254,15 +266,17 @@ export default async function HomePage() {
         <SectionHeading eyebrow="Cómo trabajamos">
           Un proceso claro, de la asesoría al desmontaje.
         </SectionHeading>
-        <ol className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <ol className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {pasos.map((paso, i) => (
-            <li
-              key={paso.titulo}
-              className="flex flex-col gap-3 border-t border-gold/40 pt-5"
-            >
-              <span className="font-serif text-3xl font-bold italic leading-none text-gold-deep">
-                {paso.numero ?? String(i + 1)}
-              </span>
+            <li key={paso.titulo} className="flex flex-col gap-4">
+              <div className="flex items-center gap-3">
+                <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-ink font-serif text-lg font-bold text-gold">
+                  {paso.numero ?? String(i + 1)}
+                </span>
+                {i < pasos.length - 1 ? (
+                  <span className="hidden h-px flex-1 bg-gold/30 lg:block" />
+                ) : null}
+              </div>
               <h3 className="font-serif text-lg font-bold text-foreground">
                 {paso.titulo}
               </h3>
