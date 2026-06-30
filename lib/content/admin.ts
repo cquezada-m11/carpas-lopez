@@ -27,6 +27,8 @@ export async function listUsuariosAdmin(): Promise<UsuarioAdmin[]> {
 
 export type ProyectoRow = Database["public"]["Tables"]["proyectos"]["Row"];
 export type ServicioRow = Database["public"]["Tables"]["servicios"]["Row"];
+export type TipoCarpaRow = Database["public"]["Tables"]["tipos_carpa"]["Row"];
+export type TestimonioRow = Database["public"]["Tables"]["testimonios"]["Row"];
 export type CotizacionRow = Database["public"]["Tables"]["cotizaciones"]["Row"];
 export type ConfiguracionRow =
   Database["public"]["Tables"]["configuracion_global"]["Row"];
@@ -71,6 +73,50 @@ export async function getServicioAdmin(
   const supabase = await createClient();
   const { data } = await supabase
     .from("servicios")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  return data;
+}
+
+/** Tipos de carpa (cualquier estado), por orden. */
+export async function listTiposCarpaAdmin(): Promise<TipoCarpaRow[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("tipos_carpa")
+    .select("*")
+    .order("orden", { ascending: true });
+  return data ?? [];
+}
+
+export async function getTipoCarpaAdmin(
+  id: string,
+): Promise<TipoCarpaRow | null> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("tipos_carpa")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  return data;
+}
+
+/** Testimonios (cualquier estado), por orden. */
+export async function listTestimoniosAdmin(): Promise<TestimonioRow[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("testimonios")
+    .select("*")
+    .order("orden", { ascending: true });
+  return data ?? [];
+}
+
+export async function getTestimonioAdmin(
+  id: string,
+): Promise<TestimonioRow | null> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("testimonios")
     .select("*")
     .eq("id", id)
     .maybeSingle();

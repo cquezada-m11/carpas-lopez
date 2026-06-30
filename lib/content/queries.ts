@@ -6,6 +6,8 @@ import type { Segmento } from "@/lib/content/segmento";
 
 export type Proyecto = Database["public"]["Tables"]["proyectos"]["Row"];
 export type Servicio = Database["public"]["Tables"]["servicios"]["Row"];
+export type TipoCarpa = Database["public"]["Tables"]["tipos_carpa"]["Row"];
+export type Testimonio = Database["public"]["Tables"]["testimonios"]["Row"];
 export type ConfiguracionGlobal =
   Database["public"]["Tables"]["configuracion_global"]["Row"];
 export type Home = Database["public"]["Tables"]["home"]["Row"];
@@ -16,6 +18,8 @@ export const CONTENT_TAGS = {
   home: "home",
   proyectos: "proyectos",
   servicios: "servicios",
+  tipos: "tipos_carpa",
+  testimonios: "testimonios",
 } as const;
 
 export async function getConfiguracion(): Promise<ConfiguracionGlobal | null> {
@@ -48,6 +52,30 @@ export async function getServiciosPublicados(): Promise<Servicio[]> {
   const supabase = createPublicClient();
   const { data } = await supabase
     .from("servicios")
+    .select("*")
+    .eq("estado", "publicado")
+    .order("orden", { ascending: true });
+  return data ?? [];
+}
+
+export async function getTiposCarpaPublicados(): Promise<TipoCarpa[]> {
+  "use cache";
+  cacheTag(CONTENT_TAGS.tipos);
+  const supabase = createPublicClient();
+  const { data } = await supabase
+    .from("tipos_carpa")
+    .select("*")
+    .eq("estado", "publicado")
+    .order("orden", { ascending: true });
+  return data ?? [];
+}
+
+export async function getTestimoniosPublicados(): Promise<Testimonio[]> {
+  "use cache";
+  cacheTag(CONTENT_TAGS.testimonios);
+  const supabase = createPublicClient();
+  const { data } = await supabase
+    .from("testimonios")
     .select("*")
     .eq("estado", "publicado")
     .order("orden", { ascending: true });

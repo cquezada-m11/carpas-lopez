@@ -1,5 +1,7 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Eyebrow,
   Section,
@@ -11,11 +13,13 @@ import { ServiceCard } from "@/components/site/service-card";
 import { ProjectCard } from "@/components/site/project-card";
 import { FeatureIcon } from "@/components/site/feature-icon";
 import { TentIcon } from "@/components/site/tent-icon";
+import { mediaUrl } from "@/lib/content/media";
 import {
   getConfiguracion,
   getHome,
   getServiciosPublicados,
   getProyectosDestacados,
+  getTiposCarpaPublicados,
 } from "@/lib/content/queries";
 
 type Cta = { texto: string; destino: string };
@@ -37,34 +41,12 @@ function asArray<T>(value: unknown): T[] {
   return Array.isArray(value) ? (value as T[]) : [];
 }
 
-const CATALOGO = [
-  {
-    key: "transparente",
-    nombre: "Transparente",
-    desc: "Cristal para bodas y cenas de gala; el cielo a la vista y un montaje impecable.",
-  },
-  {
-    key: "estructural",
-    nombre: "Estructural",
-    desc: "Aluminio modular de gran luz para ferias, expos y producciones de escala.",
-  },
-  {
-    key: "pagoda",
-    nombre: "Pagoda",
-    desc: "Módulos de 3×3 a 5×5: ideales para accesos, stands y zonas VIP.",
-  },
-  {
-    key: "galpon",
-    nombre: "Galpón",
-    desc: "Cobertura industrial para bodegaje temporal, faenas y obra.",
-  },
-];
-
 export default async function HomePage() {
-  const [config, home, servicios] = await Promise.all([
+  const [config, home, servicios, tipos] = await Promise.all([
     getConfiguracion(),
     getHome(),
     getServiciosPublicados(),
+    getTiposCarpaPublicados(),
   ]);
   const destacados = await getProyectosDestacados(
     home?.proyectos_destacados ?? [],
@@ -147,20 +129,57 @@ export default async function HomePage() {
         </div>
 
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {CATALOGO.map((tipo) => (
-            <div
-              key={tipo.key}
-              className="flex flex-col items-start gap-4 rounded-2xl border border-border bg-card p-6 shadow-card transition-shadow hover:shadow-elevated"
-            >
-              <span className="flex size-14 items-center justify-center rounded-2xl bg-ink text-gold">
-                <TentIcon name={tipo.key} className="size-8" />
-              </span>
-              <h3 className="font-serif text-lg font-bold text-foreground">
-                {tipo.nombre}
-              </h3>
-              <p className="text-sm text-muted-foreground">{tipo.desc}</p>
-            </div>
-          ))}
+          {tipos.map((tipo) => {
+            const imagen = mediaUrl(tipo.imagen_path);
+            const usos = tipo.usos_recomendados ?? [];
+            return (
+              <div
+                key={tipo.id}
+                className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-6 shadow-card transition-shadow hover:shadow-elevated"
+              >
+                {imagen ? (
+                  <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-bone-dark">
+                    <Image
+                      src={imagen}
+                      alt={tipo.nombre}
+                      fill
+                      sizes="(min-width: 1024px) 25vw, 100vw"
+                      className="object-cover"
+                    />
+                  </div>
+                ) : (
+                  <span className="flex size-14 items-center justify-center rounded-2xl bg-ink text-gold">
+                    <TentIcon name={tipo.slug} className="size-8" />
+                  </span>
+                )}
+                <h3 className="font-serif text-lg font-bold text-foreground">
+                  {tipo.nombre}
+                </h3>
+                {tipo.descripcion ? (
+                  <p className="text-sm text-muted-foreground">
+                    {tipo.descripcion}
+                  </p>
+                ) : null}
+                {tipo.dimensiones_disponibles ? (
+                  <p className="text-xs text-muted-foreground">
+                    <span className="font-semibold text-foreground">
+                      Medidas:
+                    </span>{" "}
+                    {tipo.dimensiones_disponibles}
+                  </p>
+                ) : null}
+                {usos.length > 0 ? (
+                  <div className="mt-auto flex flex-wrap gap-1.5 pt-1">
+                    {usos.map((u) => (
+                      <Badge key={u} variant="outline">
+                        {u}
+                      </Badge>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+            );
+          })}
         </div>
 
         <div className="mt-10 flex flex-col items-center gap-4 text-center">

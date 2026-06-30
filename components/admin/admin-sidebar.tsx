@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   FolderOpen,
   LayoutGrid,
+  Tent,
   Settings,
   House,
   Inbox,
@@ -30,6 +31,7 @@ const GROUPS: Group[] = [
     items: [
       { href: "/admin/proyectos", label: "Proyectos", icon: FolderOpen },
       { href: "/admin/servicios", label: "Servicios", icon: LayoutGrid },
+      { href: "/admin/tipos-carpa", label: "Tipos de carpa", icon: Tent },
     ],
   },
   {

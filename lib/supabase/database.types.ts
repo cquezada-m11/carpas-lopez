@@ -254,6 +254,93 @@ export type Database = {
         };
         Relationships: [];
       };
+      testimonios: {
+        Row: {
+          autor: string;
+          cargo: string | null;
+          created_at: string;
+          empresa: string | null;
+          estado: Database["public"]["Enums"]["estado_contenido"];
+          id: string;
+          orden: number;
+          segmento: Database["public"]["Enums"]["segmento"] | null;
+          texto: string;
+          updated_at: string;
+        };
+        Insert: {
+          autor: string;
+          cargo?: string | null;
+          created_at?: string;
+          empresa?: string | null;
+          estado?: Database["public"]["Enums"]["estado_contenido"];
+          id?: string;
+          orden?: number;
+          segmento?: Database["public"]["Enums"]["segmento"] | null;
+          texto: string;
+          updated_at?: string;
+        };
+        Update: {
+          autor?: string;
+          cargo?: string | null;
+          created_at?: string;
+          empresa?: string | null;
+          estado?: Database["public"]["Enums"]["estado_contenido"];
+          id?: string;
+          orden?: number;
+          segmento?: Database["public"]["Enums"]["segmento"] | null;
+          texto?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      tipos_carpa: {
+        Row: {
+          capacidad_referencial: string | null;
+          created_at: string;
+          descripcion: string | null;
+          dimensiones_disponibles: string | null;
+          estado: Database["public"]["Enums"]["estado_contenido"];
+          id: string;
+          imagen_path: string | null;
+          material_lona: string | null;
+          nombre: string;
+          orden: number;
+          slug: string;
+          updated_at: string;
+          usos_recomendados: string[];
+        };
+        Insert: {
+          capacidad_referencial?: string | null;
+          created_at?: string;
+          descripcion?: string | null;
+          dimensiones_disponibles?: string | null;
+          estado?: Database["public"]["Enums"]["estado_contenido"];
+          id?: string;
+          imagen_path?: string | null;
+          material_lona?: string | null;
+          nombre: string;
+          orden?: number;
+          slug: string;
+          updated_at?: string;
+          usos_recomendados?: string[];
+        };
+        Update: {
+          capacidad_referencial?: string | null;
+          created_at?: string;
+          descripcion?: string | null;
+          dimensiones_disponibles?: string | null;
+          estado?: Database["public"]["Enums"]["estado_contenido"];
+          id?: string;
+          imagen_path?: string | null;
+          material_lona?: string | null;
+          nombre?: string;
+          orden?: number;
+          slug?: string;
+          updated_at?: string;
+          usos_recomendados?: string[];
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
