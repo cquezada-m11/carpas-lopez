@@ -18,7 +18,7 @@ export default async function CotizarPage() {
 
   return (
     <Section tone="bone">
-      <SectionHeading eyebrow="Cotiza tu evento">
+      <SectionHeading eyebrow="Cotiza tu evento" as="h1">
         Cuéntanos qué celebras y lo montamos.
       </SectionHeading>
       <p className="mt-4 max-w-prose text-muted-foreground">

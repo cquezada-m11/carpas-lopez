@@ -19,7 +19,9 @@ export default function TrabajosPage({
 }) {
   return (
     <Section tone="bone">
-      <SectionHeading eyebrow="Portafolio">Trabajos realizados</SectionHeading>
+      <SectionHeading eyebrow="Portafolio" as="h1">
+        Trabajos realizados
+      </SectionHeading>
       <p className="mt-4 max-w-prose text-muted-foreground">
         Cada montaje resuelve un contexto distinto. Filtra por segmento para ver
         los que se parecen a tu evento.

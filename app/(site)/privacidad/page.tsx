@@ -16,7 +16,7 @@ export default async function PrivacidadPage() {
 
   return (
     <Section tone="bone" innerClassName="max-w-3xl py-16 md:py-20">
-      <SectionHeading eyebrow="Privacidad">
+      <SectionHeading eyebrow="Privacidad" as="h1">
         Política de privacidad
       </SectionHeading>
 

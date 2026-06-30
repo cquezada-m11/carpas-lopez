@@ -9,9 +9,17 @@ export default function SiteLayout({
 }) {
   return (
     <div className="flex min-h-screen flex-col bg-bone">
+      <a
+        href="#contenido"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-bone"
+      >
+        Saltar al contenido
+      </a>
       <LocalBusinessJsonLd />
       <SiteHeader />
-      <main className="flex-1">{children}</main>
+      <main id="contenido" className="flex-1">
+        {children}
+      </main>
       <SiteFooter />
     </div>
   );
