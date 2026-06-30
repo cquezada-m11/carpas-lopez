@@ -122,9 +122,20 @@ export async function updateProyecto(
   return { ok: true };
 }
 
-/** Elimina un proyecto y vuelve al listado. */
+/** Elimina un proyecto, sus archivos de Storage y vuelve al listado. */
 export async function deleteProyecto(id: string) {
   const supabase = await createClient();
+
+  // Borra los archivos de la galería en Storage (evita huérfanos).
+  const { data: archivos } = await supabase.storage
+    .from("medios")
+    .list(`proyectos/${id}`);
+  if (archivos && archivos.length > 0) {
+    await supabase.storage
+      .from("medios")
+      .remove(archivos.map((f) => `proyectos/${id}/${f.name}`));
+  }
+
   const { error } = await supabase.from("proyectos").delete().eq("id", id);
   if (error) throw new Error(error.message);
   updateTag(CONTENT_TAGS.proyectos);
@@ -144,6 +155,24 @@ export async function saveGaleria(
     orden: i,
   }));
   const supabase = await createClient();
+
+  // Elimina de Storage las imágenes que se quitaron de la galería.
+  const { data: actual } = await supabase
+    .from("proyectos")
+    .select("galeria")
+    .eq("id", id)
+    .maybeSingle();
+  const antiguos = Array.isArray(actual?.galeria)
+    ? (actual.galeria as { path?: string }[])
+        .map((g) => g.path)
+        .filter((p): p is string => Boolean(p))
+    : [];
+  const conservados = new Set(normalizada.map((g) => g.path));
+  const eliminados = antiguos.filter((p) => !conservados.has(p));
+  if (eliminados.length > 0) {
+    await supabase.storage.from("medios").remove(eliminados);
+  }
+
   const { error } = await supabase
     .from("proyectos")
     .update({ galeria: normalizada, imagen_portada_path: portada })

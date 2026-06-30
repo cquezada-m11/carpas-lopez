@@ -66,11 +66,23 @@ export async function updateServicio(
   }
 
   const supabase = await createClient();
+
+  // Imagen anterior, para limpiarla de Storage si fue reemplazada.
+  const { data: previo } = await supabase
+    .from("servicios")
+    .select("imagen_path")
+    .eq("id", id)
+    .maybeSingle();
+
   const { error } = await supabase
     .from("servicios")
     .update(parsed.data)
     .eq("id", id);
   if (error) return { error: error.message };
+
+  if (previo?.imagen_path && previo.imagen_path !== parsed.data.imagen_path) {
+    await supabase.storage.from("medios").remove([previo.imagen_path]);
+  }
 
   updateTag(CONTENT_TAGS.servicios);
   revalidatePath("/admin/servicios");
@@ -80,8 +92,20 @@ export async function updateServicio(
 
 export async function deleteServicio(id: string) {
   const supabase = await createClient();
+
+  const { data: previo } = await supabase
+    .from("servicios")
+    .select("imagen_path")
+    .eq("id", id)
+    .maybeSingle();
+
   const { error } = await supabase.from("servicios").delete().eq("id", id);
   if (error) throw new Error(error.message);
+
+  if (previo?.imagen_path) {
+    await supabase.storage.from("medios").remove([previo.imagen_path]);
+  }
+
   updateTag(CONTENT_TAGS.servicios);
   revalidatePath("/admin/servicios");
   redirect("/admin/servicios");
