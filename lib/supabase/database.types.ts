@@ -68,6 +68,7 @@ export type Database = {
           email: string | null;
           estado: string;
           fecha_evento: string | null;
+          fecha_rango: string | null;
           id: string;
           mensaje: string | null;
           nombre: string;
@@ -83,6 +84,7 @@ export type Database = {
           email?: string | null;
           estado?: string;
           fecha_evento?: string | null;
+          fecha_rango?: string | null;
           id?: string;
           mensaje?: string | null;
           nombre: string;
@@ -98,6 +100,7 @@ export type Database = {
           email?: string | null;
           estado?: string;
           fecha_evento?: string | null;
+          fecha_rango?: string | null;
           id?: string;
           mensaje?: string | null;
           nombre?: string;

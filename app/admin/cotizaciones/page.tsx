@@ -59,7 +59,9 @@ async function Lista() {
           <div className="grid gap-2 text-sm sm:grid-cols-2 lg:grid-cols-4">
             <span className="flex items-center gap-2 text-muted-foreground">
               <Calendar className="size-4 text-gold-deep" aria-hidden />
-              {formatFechaCorta(c.fecha_evento) ?? "—"}
+              {c.fecha_evento
+                ? formatFechaCorta(c.fecha_evento)
+                : (c.fecha_rango ?? "—")}
             </span>
             <span className="flex items-center gap-2 text-muted-foreground">
               <MapPin className="size-4 text-gold-deep" aria-hidden />

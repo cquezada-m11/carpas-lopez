@@ -10,6 +10,15 @@ export type CotizarState = {
   fieldErrors?: Record<string, string>;
 };
 
+/** Rangos válidos para la fecha aproximada del evento. */
+export const RANGOS_FECHA = [
+  "Esta semana",
+  "Este mes",
+  "Próximo mes",
+  "En 2-3 meses",
+  "Aún no lo sé",
+] as const;
+
 // Rate-limit simple en memoria (por instancia). Suficiente para v1;
 // para multi-instancia conviene un store compartido en una fase posterior.
 const RECENT = new Map<string, number[]>();
@@ -30,9 +39,6 @@ function rateLimited(ip: string): boolean {
 
 const CotizacionSchema = z.object({
   tipo_evento: z.string().min(2, "Indica el tipo de evento"),
-  fecha_evento: z
-    .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, "Indica la fecha del evento"),
   ubicacion: z.string().min(2, "Indica la comuna o ubicación"),
   numero_personas: z.coerce
     .number()
@@ -47,9 +53,12 @@ const CotizacionSchema = z.object({
     .nullable(),
 });
 
+type Lead = z.infer<typeof CotizacionSchema>;
+
 /** Notificación de lead enchufable: envía email solo si hay RESEND_API_KEY. */
 async function notificarLead(
-  lead: z.infer<typeof CotizacionSchema>,
+  lead: Lead,
+  fecha: string,
   destino: string | null,
 ): Promise<void> {
   const apiKey = process.env.RESEND_API_KEY;
@@ -67,7 +76,7 @@ async function notificarLead(
         subject: `Nueva cotización: ${lead.tipo_evento} (${lead.ubicacion})`,
         text: [
           `Tipo de evento: ${lead.tipo_evento}`,
-          `Fecha: ${lead.fecha_evento}`,
+          `Fecha: ${fecha}`,
           `Ubicación: ${lead.ubicacion}`,
           `Personas: ${lead.numero_personas}`,
           `Segmento: ${lead.segmento ?? "—"}`,
@@ -112,9 +121,19 @@ export async function enviarCotizacion(
     return v === "" ? null : v;
   };
 
+  // Fecha: exacta (YYYY-MM-DD) o rango aproximado.
+  const fechaExacta = str("fecha_evento");
+  const fechaRangoRaw = str("fecha_rango");
+  let fecha_evento: string | null = null;
+  let fecha_rango: string | null = null;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(fechaExacta)) {
+    fecha_evento = fechaExacta;
+  } else if ((RANGOS_FECHA as readonly string[]).includes(fechaRangoRaw)) {
+    fecha_rango = fechaRangoRaw;
+  }
+
   const parsed = CotizacionSchema.safeParse({
     tipo_evento: str("tipo_evento"),
-    fecha_evento: str("fecha_evento"),
     ubicacion: str("ubicacion"),
     numero_personas: str("numero_personas"),
     nombre: str("nombre"),
@@ -124,22 +143,28 @@ export async function enviarCotizacion(
     segmento: opt("segmento"),
   });
 
+  const fieldErrors: Record<string, string> = {};
   if (!parsed.success) {
-    const fieldErrors: Record<string, string> = {};
     for (const issue of parsed.error.issues) {
       const key = String(issue.path[0] ?? "");
       if (key && !fieldErrors[key]) fieldErrors[key] = issue.message;
     }
+  }
+  if (!fecha_evento && !fecha_rango) {
+    fieldErrors.fecha_evento = "Indica cuándo será el evento";
+  }
+  if (Object.keys(fieldErrors).length > 0) {
     return { error: "Revisa los campos marcados.", fieldErrors };
   }
 
-  const lead = parsed.data;
+  const lead = parsed.data!;
   const supabase = await createClient();
 
   // Insert sin .select(): el visitante anónimo puede insertar pero no leer (RLS).
   const { error } = await supabase.from("cotizaciones").insert({
     tipo_evento: lead.tipo_evento,
-    fecha_evento: lead.fecha_evento,
+    fecha_evento,
+    fecha_rango,
     ubicacion: lead.ubicacion,
     numero_personas: lead.numero_personas,
     nombre: lead.nombre,
@@ -161,7 +186,11 @@ export async function enviarCotizacion(
     .select("destino_leads")
     .eq("id", 1)
     .maybeSingle();
-  await notificarLead(lead, config?.destino_leads ?? null);
+  await notificarLead(
+    lead,
+    fecha_evento ?? fecha_rango ?? "—",
+    config?.destino_leads ?? null,
+  );
 
   return { ok: true };
 }

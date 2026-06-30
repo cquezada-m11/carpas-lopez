@@ -27,6 +27,15 @@ const TIPOS = [
   "Otro",
 ];
 
+const FECHAS = [
+  "Esta semana",
+  "Este mes",
+  "Próximo mes",
+  "En 2-3 meses",
+  "Aún no lo sé",
+  "Fecha exacta",
+];
+
 function Field({
   label,
   htmlFor,
@@ -77,6 +86,9 @@ export function CotizarForm({ whatsapp }: { whatsapp: string | null }) {
   const [tipo, setTipo] = useState("");
   const [otro, setOtro] = useState("");
   const tipoEvento = tipo === "Otro" ? otro : tipo;
+
+  const [fechaModo, setFechaModo] = useState("");
+  const [fechaExacta, setFechaExacta] = useState("");
 
   // Fecha mínima = hoy (solo en cliente, evita usar Date en el render del servidor).
   const [minFecha, setMinFecha] = useState("");
@@ -171,20 +183,58 @@ export function CotizarForm({ whatsapp }: { whatsapp: string | null }) {
         ) : null}
       </Field>
 
-      <div className="grid gap-5 sm:grid-cols-2">
-        <Field
-          label="Fecha del evento"
-          htmlFor="fecha_evento"
-          error={err("fecha_evento")}
-        >
+      {/* Fecha por rango aproximado o exacta */}
+      <Field label="Fecha del evento" error={err("fecha_evento")}>
+        <input
+          type="hidden"
+          name="fecha_rango"
+          value={fechaModo && fechaModo !== "Fecha exacta" ? fechaModo : ""}
+        />
+        <div className="flex flex-wrap gap-2">
+          {FECHAS.map((f) => (
+            <button
+              key={f}
+              type="button"
+              onClick={() => {
+                setFechaModo(f);
+                setErrors((p) => ({
+                  ...p,
+                  fecha_evento:
+                    f === "Fecha exacta" && !fechaExacta
+                      ? "Indica la fecha"
+                      : "",
+                }));
+              }}
+              className={cn(
+                "rounded-full border px-3.5 py-1.5 text-sm transition-colors",
+                fechaModo === f
+                  ? "border-gold bg-gold text-ink-deep"
+                  : "border-input text-muted-foreground hover:border-gold/60 hover:text-foreground",
+              )}
+            >
+              {f}
+            </button>
+          ))}
+        </div>
+        {fechaModo === "Fecha exacta" ? (
           <Input
-            id="fecha_evento"
+            className="mt-2"
             name="fecha_evento"
             type="date"
             min={minFecha || undefined}
-            onBlur={onBlur}
+            value={fechaExacta}
+            onChange={(e) => {
+              setFechaExacta(e.target.value);
+              setErrors((p) => ({
+                ...p,
+                fecha_evento: e.target.value ? "" : "Indica la fecha",
+              }));
+            }}
           />
-        </Field>
+        ) : null}
+      </Field>
+
+      <div className="grid gap-5 sm:grid-cols-2">
         <Field
           label="N.º de personas"
           htmlFor="numero_personas"
@@ -200,9 +250,6 @@ export function CotizarForm({ whatsapp }: { whatsapp: string | null }) {
             onBlur={onBlur}
           />
         </Field>
-      </div>
-
-      <div className="grid gap-5 sm:grid-cols-2">
         <Field
           label="Comuna / ubicación"
           htmlFor="ubicacion"
@@ -215,17 +262,18 @@ export function CotizarForm({ whatsapp }: { whatsapp: string | null }) {
             onBlur={onBlur}
           />
         </Field>
-        <Field label="Segmento (opcional)" htmlFor="segmento">
-          <Select id="segmento" name="segmento" defaultValue="">
-            <option value="">Selecciona…</option>
-            {SEGMENTOS.map((s) => (
-              <option key={s} value={s}>
-                {segmentoLabel[s]}
-              </option>
-            ))}
-          </Select>
-        </Field>
       </div>
+
+      <Field label="Segmento (opcional)" htmlFor="segmento">
+        <Select id="segmento" name="segmento" defaultValue="">
+          <option value="">Selecciona…</option>
+          {SEGMENTOS.map((s) => (
+            <option key={s} value={s}>
+              {segmentoLabel[s]}
+            </option>
+          ))}
+        </Select>
+      </Field>
 
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="Tu nombre" htmlFor="nombre" error={err("nombre")}>
