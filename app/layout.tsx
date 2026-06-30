@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Libre_Caslon_Text, Manrope } from "next/font/google";
 import { siteUrl } from "@/lib/site";
 import "./globals.css";
@@ -11,6 +11,14 @@ export const metadata: Metadata = {
   },
   description:
     "Estructuras que sostienen tus mejores eventos. Asesoría en terreno, montaje puntual y seguridad estructural para celebraciones y grandes producciones.",
+};
+
+// Bloquea el zoom en móvil (pinch / doble tap).
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 // Títulos: serif clásica elegante (PRD §11.3, lado bodas/premium)
