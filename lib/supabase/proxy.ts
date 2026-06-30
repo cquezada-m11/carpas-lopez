@@ -48,10 +48,8 @@ export async function updateSession(request: NextRequest) {
   const user = data?.claims;
 
   // El sitio es público por defecto. Solo el panel de administración
-  // (y las rutas heredadas /protected) requieren sesión.
-  const requiresAuth =
-    request.nextUrl.pathname.startsWith("/admin") ||
-    request.nextUrl.pathname.startsWith("/protected");
+  // requiere sesión.
+  const requiresAuth = request.nextUrl.pathname.startsWith("/admin");
 
   if (requiresAuth && !user) {
     // no user, redirigir al login

@@ -9,6 +9,7 @@ import {
   Settings,
   House,
   Inbox,
+  Users,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -37,6 +38,7 @@ const GROUPS: Group[] = [
       { href: "/admin/general", label: "General", icon: Settings },
       { href: "/admin/home", label: "Home", icon: House },
       { href: "/admin/cotizaciones", label: "Cotizaciones", icon: Inbox },
+      { href: "/admin/usuarios", label: "Usuarios", icon: Users },
     ],
   },
 ];

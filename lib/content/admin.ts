@@ -1,6 +1,29 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type { Database } from "@/lib/supabase/database.types";
+
+export type UsuarioAdmin = {
+  id: string;
+  email: string | null;
+  createdAt: string;
+  lastSignIn: string | null;
+  confirmado: boolean;
+};
+
+/** Lista los usuarios del proyecto (requiere service-role). */
+export async function listUsuariosAdmin(): Promise<UsuarioAdmin[]> {
+  const admin = createAdminClient();
+  const { data, error } = await admin.auth.admin.listUsers();
+  if (error) throw error;
+  return data.users.map((u) => ({
+    id: u.id,
+    email: u.email ?? null,
+    createdAt: u.created_at,
+    lastSignIn: u.last_sign_in_at ?? null,
+    confirmado: Boolean(u.email_confirmed_at ?? u.confirmed_at),
+  }));
+}
 
 export type ProyectoRow = Database["public"]["Tables"]["proyectos"]["Row"];
 export type ServicioRow = Database["public"]["Tables"]["servicios"]["Row"];
