@@ -77,6 +77,20 @@
   .font-serif {
     font-feature-settings: "liga" 0;
   }
+
+  /* iOS Safari: los inputs de fecha/hora ignoran el ancho y se desbordan.
+     Normalizamos la apariencia para que respeten el contenedor. */
+  input[type="date"],
+  input[type="time"],
+  input[type="datetime-local"] {
+    -webkit-appearance: none;
+    appearance: none;
+    min-width: 0;
+  }
+  input[type="date"]::-webkit-date-and-time-value {
+    text-align: left;
+    margin: 0;
+  }
 }
 
 @layer components {
