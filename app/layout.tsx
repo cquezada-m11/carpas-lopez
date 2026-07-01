@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Libre_Caslon_Text, Manrope } from "next/font/google";
 import { siteUrl } from "@/lib/site";
+import { LoadingOverlayProvider } from "@/components/site/loading-overlay";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -44,7 +45,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es-CL" className={`${serif.variable} ${sans.variable}`}>
-      <body className="min-h-screen bg-bone-dark">{children}</body>
+      <body className="min-h-screen bg-bone-dark">
+        <LoadingOverlayProvider>{children}</LoadingOverlayProvider>
+      </body>
     </html>
   );
 }

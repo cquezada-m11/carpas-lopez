@@ -3,6 +3,7 @@
 import { useTransition } from "react";
 import { Select } from "@/components/ui/select";
 import { setEstadoCotizacion } from "@/app/admin/cotizaciones/actions";
+import { useOverlayPending } from "@/components/site/loading-overlay";
 import { ESTADOS_LEAD } from "@/lib/content/lead-estado";
 
 export function EstadoLeadSelect({
@@ -13,6 +14,7 @@ export function EstadoLeadSelect({
   estado: string;
 }) {
   const [pending, start] = useTransition();
+  useOverlayPending(pending);
   return (
     <Select
       defaultValue={ESTADOS_LEAD.includes(estado as never) ? estado : "nuevo"}

@@ -13,6 +13,7 @@ import {
   enviarCotizacion,
   type CotizarState,
 } from "@/app/(site)/cotizar/actions";
+import { useOverlayPending } from "@/components/site/loading-overlay";
 import { cn } from "@/lib/utils";
 
 const TIPOS = [
@@ -80,6 +81,7 @@ export function CotizarForm({ whatsapp }: { whatsapp: string | null }) {
     enviarCotizacion,
     {},
   );
+  useOverlayPending(pending);
   const fe = state.fieldErrors ?? {};
   const wa = whatsapp ? `https://wa.me/${whatsapp.replace(/\D/g, "")}` : null;
 

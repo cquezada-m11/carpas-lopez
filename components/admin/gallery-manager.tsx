@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { mediaUrl, type GalleryItem } from "@/lib/content/media";
 import { saveGaleria } from "@/app/admin/proyectos/actions";
 import { UrlImageImport } from "@/components/admin/url-image-import";
+import { useOverlayPending } from "@/components/site/loading-overlay";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -26,6 +27,7 @@ export function GalleryManager({
   const [dirty, setDirty] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  useOverlayPending(pending || uploading);
 
   const supabase = createClient();
   // Portada efectiva: la elegida o la primera de la galería (RF-03).

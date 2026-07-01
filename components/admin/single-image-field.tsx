@@ -6,6 +6,7 @@ import { Upload, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { mediaUrl } from "@/lib/content/media";
 import { UrlImageImport } from "@/components/admin/url-image-import";
+import { useOverlayPending } from "@/components/site/loading-overlay";
 
 /**
  * Campo de imagen única: sube a Storage y guarda el path.
@@ -37,6 +38,7 @@ export function SingleImageField({
 
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  useOverlayPending(uploading);
   const supabase = createClient();
   const url = mediaUrl(path);
 

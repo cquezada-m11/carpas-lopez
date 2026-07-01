@@ -141,9 +141,7 @@ export function LoadingOverlayProvider({
         <NavigationWatcher />
       </Suspense>
       {children}
-      {mounted && visible
-        ? createPortal(<BrandSplash />, document.body)
-        : null}
+      {mounted && visible ? createPortal(<BrandSplash />, document.body) : null}
     </LoadingOverlayContext.Provider>
   );
 }

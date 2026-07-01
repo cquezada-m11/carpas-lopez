@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { SingleImageField } from "@/components/admin/single-image-field";
 import { guardarHome, type HomeFormState } from "@/app/admin/home/actions";
+import { useOverlayPending } from "@/components/site/loading-overlay";
 import type { HomeRow } from "@/lib/content/admin";
 
 type Cta = { texto: string; destino: string };
@@ -58,6 +59,7 @@ export function HomeForm({
   );
   const [state, setState] = useState<HomeFormState>({});
   const [pending, start] = useTransition();
+  useOverlayPending(pending);
 
   function updateStat(i: number, patch: Partial<Stat>) {
     setStats((prev) => prev.map((s, j) => (i === j ? { ...s, ...patch } : s)));

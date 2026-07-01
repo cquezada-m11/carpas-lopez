@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { Link2 } from "lucide-react";
 import { importImageFromUrl } from "@/app/admin/media/actions";
+import { useOverlayPending } from "@/components/site/loading-overlay";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
@@ -22,6 +23,7 @@ export function UrlImageImport({
   const [url, setUrl] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, start] = useTransition();
+  useOverlayPending(pending);
 
   function importar() {
     const value = url.trim();
