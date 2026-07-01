@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { SingleImageField } from "@/components/admin/single-image-field";
+import { AdminPanel } from "@/components/admin/admin-panel";
 import { guardarHome, type HomeFormState } from "@/app/admin/home/actions";
 import { useOverlayPending } from "@/components/site/loading-overlay";
 import type { HomeRow } from "@/lib/content/admin";
@@ -25,8 +26,74 @@ function parseCta(value: unknown): Cta {
   return { texto: "", destino: "" };
 }
 
-function fieldLabel(text: string) {
-  return <Label className="text-xs text-muted-foreground">{text}</Label>;
+/** Campo con label sobre el control. */
+function Field({
+  label,
+  htmlFor,
+  hint,
+  children,
+}: {
+  label: string;
+  htmlFor?: string;
+  hint?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <Label htmlFor={htmlFor}>{label}</Label>
+      {children}
+      {hint ? <p className="text-xs text-muted-foreground">{hint}</p> : null}
+    </div>
+  );
+}
+
+function SubLabel({ children }: { children: React.ReactNode }) {
+  return <Label className="text-xs text-muted-foreground">{children}</Label>;
+}
+
+/** Ítem de un repetidor: rótulo + acción de quitar en el encabezado. */
+function RepeaterItem({
+  label,
+  onRemove,
+  children,
+}: {
+  label: string;
+  onRemove: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex flex-col gap-3 rounded-xl border border-border bg-bone-alt p-4">
+      <div className="flex items-center justify-between">
+        <span className="font-mono text-eyebrow uppercase text-gold-deep">
+          {label}
+        </span>
+        <button
+          type="button"
+          onClick={onRemove}
+          className="flex items-center gap-1 text-xs font-semibold text-destructive hover:underline"
+        >
+          <Trash2 className="size-3.5" /> Quitar
+        </button>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function AddButton({ onClick }: { onClick: () => void }) {
+  return (
+    <Button type="button" variant="outline" size="sm" onClick={onClick}>
+      <Plus className="size-4" /> Agregar
+    </Button>
+  );
+}
+
+function EmptyHint({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="rounded-xl border border-dashed border-input px-4 py-6 text-center text-sm text-muted-foreground">
+      {children}
+    </p>
+  );
 }
 
 export function HomeForm({
@@ -69,7 +136,6 @@ export function HomeForm({
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
     );
   }
-
   function updateDif(i: number, patch: Partial<Diferenciador>) {
     setDifs((prev) => prev.map((d, j) => (i === j ? { ...d, ...patch } : d)));
   }
@@ -96,274 +162,282 @@ export function HomeForm({
   }
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       {state.error ? (
-        <p className="flex items-center gap-2 rounded-sm border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        <p className="flex items-center gap-2 rounded-xl border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
           <AlertCircle className="size-4 shrink-0" aria-hidden />
           {state.error}
         </p>
       ) : null}
-      {state.ok ? (
-        <p className="flex items-center gap-2 rounded-sm border border-gold/40 bg-gold/10 px-3 py-2 text-sm text-gold-deep">
-          <CheckCircle2 className="size-4 shrink-0" aria-hidden />
-          Home guardado.
-        </p>
-      ) : null}
 
       {/* Hero */}
-      <section className="flex flex-col gap-4">
-        <h2 className="font-serif text-heading font-bold">Hero</h2>
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="hero_titulo">Titular</Label>
+      <AdminPanel
+        eyebrow="Portada"
+        title="Hero"
+        description="Lo primero que se ve: titular, bajada, imagen de fondo y botones."
+      >
+        <Field label="Titular" htmlFor="hero_titulo">
           <Textarea
             id="hero_titulo"
             rows={2}
             value={heroTitulo}
             onChange={(e) => setHeroTitulo(e.target.value)}
           />
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="hero_bajada">Bajada</Label>
+        </Field>
+        <Field label="Bajada" htmlFor="hero_bajada">
           <Textarea
             id="hero_bajada"
             rows={2}
             value={heroBajada}
             onChange={(e) => setHeroBajada(e.target.value)}
           />
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <Label>Imagen de fondo</Label>
+        </Field>
+        <Field
+          label="Imagen de fondo"
+          hint="Se muestra detrás del hero con un degradado oscuro. Usa una foto apaisada y de buena resolución."
+        >
           <SingleImageField
             folder="home"
             value={heroMedia}
             onChange={setHeroMedia}
           />
-          <p className="text-xs text-muted-foreground">
-            Se muestra detrás del hero con un degradado oscuro. Usa una foto
-            apaisada y de buena resolución.
-          </p>
-        </div>
+        </Field>
+
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="flex flex-col gap-2 rounded-sm border border-border p-3">
+          <div className="flex flex-col gap-2 rounded-xl border border-border bg-bone-alt p-4">
             <span className="font-mono text-eyebrow uppercase text-gold-deep">
               CTA primario
             </span>
-            {fieldLabel("Texto")}
+            <SubLabel>Texto</SubLabel>
             <Input
               value={ctaP.texto}
               onChange={(e) => setCtaP({ ...ctaP, texto: e.target.value })}
             />
-            {fieldLabel("Destino")}
+            <SubLabel>Destino</SubLabel>
             <Input
               value={ctaP.destino}
               onChange={(e) => setCtaP({ ...ctaP, destino: e.target.value })}
             />
           </div>
-          <div className="flex flex-col gap-2 rounded-sm border border-border p-3">
+          <div className="flex flex-col gap-2 rounded-xl border border-border bg-bone-alt p-4">
             <span className="font-mono text-eyebrow uppercase text-gold-deep">
               CTA secundario
             </span>
-            {fieldLabel("Texto")}
+            <SubLabel>Texto</SubLabel>
             <Input
               value={ctaS.texto}
               onChange={(e) => setCtaS({ ...ctaS, texto: e.target.value })}
             />
-            {fieldLabel("Destino")}
+            <SubLabel>Destino</SubLabel>
             <Input
               value={ctaS.destino}
               onChange={(e) => setCtaS({ ...ctaS, destino: e.target.value })}
             />
           </div>
         </div>
-      </section>
+      </AdminPanel>
 
       {/* Diferenciadores */}
-      <section className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <h2 className="font-serif text-heading font-bold">
-            Por qué elegirnos
-          </h2>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
+      <AdminPanel
+        eyebrow="Sección · Por qué elegirnos"
+        title="Diferenciadores"
+        description="Los bloques del área oscura del home (puntualidad, seguridad, asesoría…)."
+        action={
+          <AddButton
             onClick={() =>
               setDifs((p) => [...p, { icono: "", titulo: "", texto: "" }])
             }
-          >
-            <Plus className="size-4" /> Agregar
-          </Button>
-        </div>
-        {difs.map((d, i) => (
-          <div
-            key={i}
-            className="flex flex-col gap-2 rounded-sm border border-border p-3"
-          >
-            <div className="grid gap-2 sm:grid-cols-2">
-              <div>
-                {fieldLabel("Ícono (clock, shield-check, map-pin…)")}
-                <Input
-                  value={d.icono}
-                  onChange={(e) => updateDif(i, { icono: e.target.value })}
-                />
-              </div>
-              <div>
-                {fieldLabel("Título")}
-                <Input
-                  value={d.titulo}
-                  onChange={(e) => updateDif(i, { titulo: e.target.value })}
-                />
-              </div>
-            </div>
-            {fieldLabel("Texto")}
-            <Textarea
-              rows={2}
-              value={d.texto}
-              onChange={(e) => updateDif(i, { texto: e.target.value })}
-            />
-            <button
-              type="button"
-              onClick={() => setDifs((p) => p.filter((_, j) => j !== i))}
-              className="flex w-fit items-center gap-1 text-xs text-destructive hover:underline"
+          />
+        }
+      >
+        {difs.length === 0 ? (
+          <EmptyHint>Sin diferenciadores. Agrega el primero.</EmptyHint>
+        ) : (
+          difs.map((d, i) => (
+            <RepeaterItem
+              key={i}
+              label={`Diferenciador ${i + 1}`}
+              onRemove={() => setDifs((p) => p.filter((_, j) => j !== i))}
             >
-              <Trash2 className="size-3.5" /> Quitar
-            </button>
-          </div>
-        ))}
-      </section>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <SubLabel>Ícono (clock, shield-check, map-pin…)</SubLabel>
+                  <Input
+                    value={d.icono}
+                    onChange={(e) => updateDif(i, { icono: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <SubLabel>Título</SubLabel>
+                  <Input
+                    value={d.titulo}
+                    onChange={(e) => updateDif(i, { titulo: e.target.value })}
+                  />
+                </div>
+              </div>
+              <div>
+                <SubLabel>Texto</SubLabel>
+                <Textarea
+                  rows={2}
+                  value={d.texto}
+                  onChange={(e) => updateDif(i, { texto: e.target.value })}
+                />
+              </div>
+            </RepeaterItem>
+          ))
+        )}
+      </AdminPanel>
 
       {/* Proceso */}
-      <section className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <h2 className="font-serif text-heading font-bold">Cómo trabajamos</h2>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
+      <AdminPanel
+        eyebrow="Sección · Cómo trabajamos"
+        title="Proceso"
+        description="Los pasos del timeline: de la asesoría al desmontaje."
+        action={
+          <AddButton
             onClick={() =>
               setPasos((p) => [
                 ...p,
                 { numero: String(p.length + 1), titulo: "", texto: "" },
               ])
             }
-          >
-            <Plus className="size-4" /> Agregar
-          </Button>
-        </div>
-        {pasos.map((p, i) => (
-          <div
-            key={i}
-            className="flex flex-col gap-2 rounded-sm border border-border p-3"
-          >
-            <div className="grid gap-2 sm:grid-cols-[6rem_1fr]">
-              <div>
-                {fieldLabel("N.º")}
-                <Input
-                  value={p.numero}
-                  onChange={(e) => updatePaso(i, { numero: e.target.value })}
-                />
-              </div>
-              <div>
-                {fieldLabel("Título")}
-                <Input
-                  value={p.titulo}
-                  onChange={(e) => updatePaso(i, { titulo: e.target.value })}
-                />
-              </div>
-            </div>
-            {fieldLabel("Texto")}
-            <Textarea
-              rows={2}
-              value={p.texto}
-              onChange={(e) => updatePaso(i, { texto: e.target.value })}
-            />
-            <button
-              type="button"
-              onClick={() => setPasos((prev) => prev.filter((_, j) => j !== i))}
-              className="flex w-fit items-center gap-1 text-xs text-destructive hover:underline"
-            >
-              <Trash2 className="size-3.5" /> Quitar
-            </button>
-          </div>
-        ))}
-      </section>
-
-      {/* Cifras del hero */}
-      <section className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <h2 className="font-serif text-heading font-bold">Cifras del hero</h2>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => setStats((p) => [...p, { valor: "", etiqueta: "" }])}
-          >
-            <Plus className="size-4" /> Agregar
-          </Button>
-        </div>
-        {stats.map((s, i) => (
-          <div
-            key={i}
-            className="grid items-end gap-2 rounded-2xl border border-border p-3 sm:grid-cols-[8rem_1fr_auto]"
-          >
-            <div>
-              {fieldLabel("Valor")}
-              <Input
-                value={s.valor}
-                onChange={(e) => updateStat(i, { valor: e.target.value })}
-              />
-            </div>
-            <div>
-              {fieldLabel("Etiqueta")}
-              <Input
-                value={s.etiqueta}
-                onChange={(e) => updateStat(i, { etiqueta: e.target.value })}
-              />
-            </div>
-            <button
-              type="button"
-              onClick={() => setStats((p) => p.filter((_, j) => j !== i))}
-              className="flex items-center gap-1 px-1 pb-3 text-xs text-destructive hover:underline"
-            >
-              <Trash2 className="size-3.5" /> Quitar
-            </button>
-          </div>
-        ))}
-      </section>
-
-      {/* Proyectos destacados */}
-      <section className="flex flex-col gap-3">
-        <h2 className="font-serif text-heading font-bold">
-          Proyectos destacados
-        </h2>
-        <p className="text-sm text-muted-foreground">
-          Elige los proyectos de la sección de trabajos del home. Si no
-          seleccionas ninguno, se muestran los últimos publicados.
-        </p>
-        {proyectos.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            No hay proyectos publicados todavía.
-          </p>
+          />
+        }
+      >
+        {pasos.length === 0 ? (
+          <EmptyHint>Sin pasos. Agrega el primero.</EmptyHint>
         ) : (
-          <ul className="flex flex-col gap-1.5">
-            {proyectos.map((p) => (
-              <li key={p.id}>
-                <label className="flex cursor-pointer items-center gap-2.5 rounded-xl border border-border px-3 py-2 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={destacados.includes(p.id)}
-                    onChange={() => toggleDestacado(p.id)}
-                    className="size-4 accent-gold"
+          pasos.map((p, i) => (
+            <RepeaterItem
+              key={i}
+              label={`Paso ${i + 1}`}
+              onRemove={() =>
+                setPasos((prev) => prev.filter((_, j) => j !== i))
+              }
+            >
+              <div className="grid gap-3 sm:grid-cols-[6rem_1fr]">
+                <div>
+                  <SubLabel>N.º</SubLabel>
+                  <Input
+                    value={p.numero}
+                    onChange={(e) => updatePaso(i, { numero: e.target.value })}
                   />
-                  {p.titulo}
-                </label>
-              </li>
-            ))}
+                </div>
+                <div>
+                  <SubLabel>Título</SubLabel>
+                  <Input
+                    value={p.titulo}
+                    onChange={(e) => updatePaso(i, { titulo: e.target.value })}
+                  />
+                </div>
+              </div>
+              <div>
+                <SubLabel>Texto</SubLabel>
+                <Textarea
+                  rows={2}
+                  value={p.texto}
+                  onChange={(e) => updatePaso(i, { texto: e.target.value })}
+                />
+              </div>
+            </RepeaterItem>
+          ))
+        )}
+      </AdminPanel>
+
+      {/* Cifras */}
+      <AdminPanel
+        eyebrow="Barra de cifras"
+        title="Cifras del hero"
+        description="Los números destacados (+15 años, 200+ eventos…)."
+        action={
+          <AddButton
+            onClick={() => setStats((p) => [...p, { valor: "", etiqueta: "" }])}
+          />
+        }
+      >
+        {stats.length === 0 ? (
+          <EmptyHint>Sin cifras. Agrega la primera.</EmptyHint>
+        ) : (
+          stats.map((s, i) => (
+            <div
+              key={i}
+              className="grid items-end gap-3 rounded-xl border border-border bg-bone-alt p-4 sm:grid-cols-[8rem_1fr_auto]"
+            >
+              <div>
+                <SubLabel>Valor</SubLabel>
+                <Input
+                  value={s.valor}
+                  onChange={(e) => updateStat(i, { valor: e.target.value })}
+                />
+              </div>
+              <div>
+                <SubLabel>Etiqueta</SubLabel>
+                <Input
+                  value={s.etiqueta}
+                  onChange={(e) => updateStat(i, { etiqueta: e.target.value })}
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => setStats((p) => p.filter((_, j) => j !== i))}
+                className="flex items-center gap-1 px-1 pb-3 text-xs font-semibold text-destructive hover:underline"
+              >
+                <Trash2 className="size-3.5" /> Quitar
+              </button>
+            </div>
+          ))
+        )}
+      </AdminPanel>
+
+      {/* Destacados */}
+      <AdminPanel
+        eyebrow="Sección · Trabajos"
+        title="Proyectos destacados"
+        description="Los proyectos de la sección de trabajos del home. Si no seleccionas ninguno, se muestran los últimos publicados."
+      >
+        {proyectos.length === 0 ? (
+          <EmptyHint>No hay proyectos publicados todavía.</EmptyHint>
+        ) : (
+          <ul className="grid gap-2 sm:grid-cols-2">
+            {proyectos.map((p) => {
+              const activo = destacados.includes(p.id);
+              return (
+                <li key={p.id}>
+                  <label
+                    className={
+                      "flex cursor-pointer items-center gap-2.5 rounded-xl border px-3 py-2.5 text-sm transition-colors " +
+                      (activo
+                        ? "border-gold bg-gold/10 font-medium text-foreground"
+                        : "border-border hover:border-gold/50")
+                    }
+                  >
+                    <input
+                      type="checkbox"
+                      checked={activo}
+                      onChange={() => toggleDestacado(p.id)}
+                      className="size-4 accent-gold"
+                    />
+                    {p.titulo}
+                  </label>
+                </li>
+              );
+            })}
           </ul>
         )}
-      </section>
+      </AdminPanel>
 
-      <div className="flex items-center justify-end gap-3 border-t border-border pt-4">
+      {/* Barra de guardar (sticky) */}
+      <div className="sticky bottom-4 z-10 flex items-center justify-between gap-3 rounded-full border border-border bg-card/95 px-5 py-3 shadow-elevated backdrop-blur">
+        <span className="flex items-center gap-2 text-sm text-muted-foreground">
+          {state.ok ? (
+            <>
+              <CheckCircle2 className="size-4 text-gold-deep" aria-hidden />
+              Guardado. La portada del sitio ya refleja los cambios.
+            </>
+          ) : (
+            "Cambios de la portada del sitio."
+          )}
+        </span>
         <Button type="button" onClick={save} disabled={pending}>
           {pending ? "Guardando…" : "Guardar cambios"}
         </Button>
