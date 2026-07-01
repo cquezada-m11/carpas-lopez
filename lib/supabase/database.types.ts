@@ -62,6 +62,41 @@ export type Database = {
         };
         Relationships: [];
       };
+      cotizacion_notas: {
+        Row: {
+          autor: string | null;
+          autor_id: string | null;
+          contenido: string;
+          cotizacion_id: string;
+          created_at: string;
+          id: string;
+        };
+        Insert: {
+          autor?: string | null;
+          autor_id?: string | null;
+          contenido: string;
+          cotizacion_id: string;
+          created_at?: string;
+          id?: string;
+        };
+        Update: {
+          autor?: string | null;
+          autor_id?: string | null;
+          contenido?: string;
+          cotizacion_id?: string;
+          created_at?: string;
+          id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "cotizacion_notas_cotizacion_id_fkey";
+            columns: ["cotizacion_id"];
+            isOneToOne: false;
+            referencedRelation: "cotizaciones";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       cotizaciones: {
         Row: {
           created_at: string;
@@ -72,7 +107,6 @@ export type Database = {
           id: string;
           mensaje: string | null;
           nombre: string;
-          notas: string | null;
           numero_personas: number | null;
           origen: string | null;
           segmento: Database["public"]["Enums"]["segmento"] | null;
@@ -90,7 +124,6 @@ export type Database = {
           id?: string;
           mensaje?: string | null;
           nombre: string;
-          notas?: string | null;
           numero_personas?: number | null;
           origen?: string | null;
           segmento?: Database["public"]["Enums"]["segmento"] | null;
@@ -108,7 +141,6 @@ export type Database = {
           id?: string;
           mensaje?: string | null;
           nombre?: string;
-          notas?: string | null;
           numero_personas?: number | null;
           origen?: string | null;
           segmento?: Database["public"]["Enums"]["segmento"] | null;

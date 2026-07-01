@@ -12,10 +12,11 @@ import {
   Clock,
   Tag,
 } from "lucide-react";
-import { getCotizacionAdmin } from "@/lib/content/admin";
+import { getCotizacionAdmin, getNotasCotizacion } from "@/lib/content/admin";
 import { AdminPanel } from "@/components/admin/admin-panel";
 import { EstadoLeadSelect } from "@/components/admin/estado-lead-select";
-import { NotasCotizacion } from "@/components/admin/notas-cotizacion";
+import { AddNotaForm } from "@/components/admin/add-nota-form";
+import { deleteNotaCotizacion } from "@/app/admin/cotizaciones/actions";
 import { Button } from "@/components/ui/button";
 import { segmentoLabel, isSegmento } from "@/lib/content/segmento";
 import { formatFechaCorta, formatFechaHora } from "@/lib/content/format";
@@ -54,7 +55,10 @@ function InfoRow({
 
 async function Detalle({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const c = await getCotizacionAdmin(id);
+  const [c, notas] = await Promise.all([
+    getCotizacionAdmin(id),
+    getNotasCotizacion(id),
+  ]);
   if (!c) notFound();
 
   const wa = c.telefono
@@ -128,9 +132,50 @@ async function Detalle({ params }: { params: Promise<{ id: string }> }) {
           <AdminPanel
             eyebrow="Interno"
             title="Notas del equipo"
-            description="No se muestran al cliente; sirven para seguimiento y traspaso."
+            description="Bitácora de seguimiento. No se muestran al cliente."
           >
-            <NotasCotizacion id={c.id} initial={c.notas} />
+            <AddNotaForm cotizacionId={c.id} />
+
+            {notas.length > 0 ? (
+              <ol className="mt-4 flex flex-col gap-4 border-l-2 border-border/70 pl-5">
+                {notas.map((n) => (
+                  <li key={n.id} className="relative">
+                    <span
+                      className="absolute top-2 size-2.5 rounded-full bg-gold ring-2 ring-card"
+                      style={{ left: "calc(-1.25rem - 4px)" }}
+                      aria-hidden
+                    />
+                    <div className="rounded-xl bg-bone-alt px-3.5 py-2.5">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span className="text-xs font-semibold text-foreground">
+                          {n.autor ?? "Equipo"}
+                        </span>
+                        <span className="text-[11px] text-muted-foreground">
+                          {formatFechaHora(n.created_at)}
+                        </span>
+                      </div>
+                      <p className="mt-1.5 whitespace-pre-line text-sm text-foreground/90">
+                        {n.contenido}
+                      </p>
+                      <form
+                        action={deleteNotaCotizacion.bind(null, n.id, c.id)}
+                      >
+                        <button
+                          type="submit"
+                          className="mt-1.5 text-[11px] text-muted-foreground hover:text-destructive"
+                        >
+                          Eliminar
+                        </button>
+                      </form>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <p className="mt-4 text-sm text-muted-foreground">
+                Aún no hay notas. Agrega la primera.
+              </p>
+            )}
           </AdminPanel>
         </div>
 

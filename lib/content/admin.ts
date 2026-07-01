@@ -30,6 +30,9 @@ export type ServicioRow = Database["public"]["Tables"]["servicios"]["Row"];
 export type TipoCarpaRow = Database["public"]["Tables"]["tipos_carpa"]["Row"];
 export type TestimonioRow = Database["public"]["Tables"]["testimonios"]["Row"];
 export type CotizacionRow = Database["public"]["Tables"]["cotizaciones"]["Row"];
+export type NotaCotizacionRow =
+  Database["public"]["Tables"]["cotizacion_notas"]["Row"];
+export type CotizacionListItem = CotizacionRow & { tieneNotas: boolean };
 export type ConfiguracionRow =
   Database["public"]["Tables"]["configuracion_global"]["Row"];
 export type HomeRow = Database["public"]["Tables"]["home"]["Row"];
@@ -158,14 +161,21 @@ export async function getHomeAdmin(): Promise<HomeRow | null> {
   return data;
 }
 
-/** Cotizaciones recibidas (admin), recientes primero. */
-export async function listCotizacionesAdmin(): Promise<CotizacionRow[]> {
+/** Cotizaciones recibidas (admin), recientes primero, con flag de notas. */
+export async function listCotizacionesAdmin(): Promise<CotizacionListItem[]> {
   const supabase = await createClient();
-  const { data } = await supabase
-    .from("cotizaciones")
-    .select("*")
-    .order("created_at", { ascending: false });
-  return data ?? [];
+  const [rows, notas] = await Promise.all([
+    supabase
+      .from("cotizaciones")
+      .select("*")
+      .order("created_at", { ascending: false }),
+    supabase.from("cotizacion_notas").select("cotizacion_id"),
+  ]);
+  const conNotas = new Set((notas.data ?? []).map((n) => n.cotizacion_id));
+  return (rows.data ?? []).map((r) => ({
+    ...r,
+    tieneNotas: conNotas.has(r.id),
+  }));
 }
 
 /** Una cotización por id (admin). */
@@ -179,6 +189,19 @@ export async function getCotizacionAdmin(
     .eq("id", id)
     .maybeSingle();
   return data;
+}
+
+/** Bitácora de notas internas de una cotización, recientes primero. */
+export async function getNotasCotizacion(
+  cotizacionId: string,
+): Promise<NotaCotizacionRow[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("cotizacion_notas")
+    .select("*")
+    .eq("cotizacion_id", cotizacionId)
+    .order("created_at", { ascending: false });
+  return data ?? [];
 }
 
 /** Conteos para el dashboard del panel. */

@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { isEstadoLead } from "@/lib/content/lead-estado";
 
-export type NotasState = { ok?: boolean; error?: string };
+export type NotaState = { ok?: boolean; error?: string };
 
 export async function setEstadoCotizacion(id: string, estado: string) {
   if (!isEstadoLead(estado)) return;
@@ -14,16 +14,38 @@ export async function setEstadoCotizacion(id: string, estado: string) {
   revalidatePath(`/admin/cotizaciones/${id}`);
 }
 
-export async function saveNotasCotizacion(
-  id: string,
-  notas: string,
-): Promise<NotasState> {
+/** Agrega una nota a la bitácora, registrando al autor desde la sesión. */
+export async function addNotaCotizacion(
+  cotizacionId: string,
+  contenido: string,
+): Promise<NotaState> {
+  const texto = contenido.trim();
+  if (texto === "") return { error: "La nota está vacía." };
+
   const supabase = await createClient();
-  const { error } = await supabase
-    .from("cotizaciones")
-    .update({ notas: notas.trim() === "" ? null : notas })
-    .eq("id", id);
+  const { data } = await supabase.auth.getClaims();
+  const claims = data?.claims as { sub?: string; email?: string } | undefined;
+  if (!claims?.sub) return { error: "No autorizado." };
+
+  const { error } = await supabase.from("cotizacion_notas").insert({
+    cotizacion_id: cotizacionId,
+    autor_id: claims.sub,
+    autor: claims.email ?? null,
+    contenido: texto,
+  });
   if (error) return { error: error.message };
-  revalidatePath(`/admin/cotizaciones/${id}`);
+
+  revalidatePath(`/admin/cotizaciones/${cotizacionId}`);
+  revalidatePath("/admin/cotizaciones");
   return { ok: true };
+}
+
+export async function deleteNotaCotizacion(
+  notaId: string,
+  cotizacionId: string,
+) {
+  const supabase = await createClient();
+  await supabase.from("cotizacion_notas").delete().eq("id", notaId);
+  revalidatePath(`/admin/cotizaciones/${cotizacionId}`);
+  revalidatePath("/admin/cotizaciones");
 }

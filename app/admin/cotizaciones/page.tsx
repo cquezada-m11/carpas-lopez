@@ -67,7 +67,7 @@ async function Lista() {
                 <span className="truncate font-semibold text-foreground">
                   {c.nombre}
                 </span>
-                {c.notas ? (
+                {c.tieneNotas ? (
                   <StickyNote
                     className="size-3.5 shrink-0 text-gold-deep"
                     aria-label="Con notas"
