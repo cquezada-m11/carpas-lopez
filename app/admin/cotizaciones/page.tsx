@@ -1,9 +1,30 @@
 import { Suspense } from "react";
-import { Calendar, MapPin, Users, Mail, Phone } from "lucide-react";
+import Link from "next/link";
+import { Calendar, MapPin, Users, StickyNote } from "lucide-react";
 import { listCotizacionesAdmin } from "@/lib/content/admin";
-import { EstadoLeadSelect } from "@/components/admin/estado-lead-select";
-import { segmentoLabel, isSegmento } from "@/lib/content/segmento";
-import { formatFechaCorta, formatFechaHora } from "@/lib/content/format";
+import { formatFechaCorta } from "@/lib/content/format";
+import { cn } from "@/lib/utils";
+
+const ESTADO_STYLES: Record<string, string> = {
+  nuevo: "bg-gold text-ink-deep",
+  contactado: "bg-bone-dark text-foreground",
+  cotizado: "bg-gold/15 text-gold-deep",
+  cerrado: "bg-ink text-bone",
+  descartado: "border border-input text-muted-foreground",
+};
+
+function EstadoPill({ estado }: { estado: string }) {
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center rounded-full px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.1em]",
+        ESTADO_STYLES[estado] ?? "bg-bone-dark text-muted-foreground",
+      )}
+    >
+      {estado}
+    </span>
+  );
+}
 
 export default function CotizacionesAdminPage() {
   return (
@@ -11,7 +32,8 @@ export default function CotizacionesAdminPage() {
       <div>
         <h1 className="font-serif text-heading-lg font-bold">Cotizaciones</h1>
         <p className="mt-2 text-muted-foreground">
-          Solicitudes recibidas desde el formulario del sitio.
+          Solicitudes recibidas desde el formulario del sitio. Abre una para ver
+          el detalle y dejar notas internas.
         </p>
       </div>
       <Suspense fallback={<p className="text-muted-foreground">Cargando…</p>}>
@@ -33,75 +55,50 @@ async function Lista() {
   }
 
   return (
-    <ul className="flex flex-col gap-4">
+    <ul className="flex flex-col divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card shadow-card">
       {rows.map((c) => (
-        <li
-          key={c.id}
-          className="flex flex-col gap-4 rounded border border-border bg-card p-5 shadow-card"
-        >
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
+        <li key={c.id}>
+          <Link
+            href={`/admin/cotizaciones/${c.id}`}
+            className="flex items-center gap-4 px-4 py-3.5 transition-colors hover:bg-foreground/5"
+          >
+            <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="font-serif text-lg font-bold">{c.nombre}</span>
-                {isSegmento(c.segmento) ? (
-                  <span className="font-mono text-eyebrow uppercase text-gold-deep">
-                    {segmentoLabel[c.segmento]}
-                  </span>
+                <span className="truncate font-semibold text-foreground">
+                  {c.nombre}
+                </span>
+                {c.notas ? (
+                  <StickyNote
+                    className="size-3.5 shrink-0 text-gold-deep"
+                    aria-label="Con notas"
+                  />
                 ) : null}
               </div>
-              <span className="text-xs text-muted-foreground">
-                {formatFechaHora(c.created_at)} · {c.origen ?? "—"}
+              <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                <span>{c.tipo_evento ?? "—"}</span>
+                <span className="inline-flex items-center gap-1">
+                  <Calendar className="size-3" aria-hidden />
+                  {c.fecha_evento
+                    ? formatFechaCorta(c.fecha_evento)
+                    : (c.fecha_rango ?? "—")}
+                </span>
+                <span className="inline-flex items-center gap-1">
+                  <MapPin className="size-3" aria-hidden />
+                  {c.ubicacion ?? "—"}
+                </span>
+                <span className="inline-flex items-center gap-1">
+                  <Users className="size-3" aria-hidden />
+                  {c.numero_personas ?? "—"}
+                </span>
+              </div>
+            </div>
+            <div className="flex shrink-0 flex-col items-end gap-1">
+              <EstadoPill estado={c.estado} />
+              <span className="text-[11px] text-muted-foreground">
+                {formatFechaCorta(c.created_at.slice(0, 10))}
               </span>
             </div>
-            <EstadoLeadSelect id={c.id} estado={c.estado} />
-          </div>
-
-          <div className="grid gap-2 text-sm sm:grid-cols-2 lg:grid-cols-4">
-            <span className="flex items-center gap-2 text-muted-foreground">
-              <Calendar className="size-4 text-gold-deep" aria-hidden />
-              {c.fecha_evento
-                ? formatFechaCorta(c.fecha_evento)
-                : (c.fecha_rango ?? "—")}
-            </span>
-            <span className="flex items-center gap-2 text-muted-foreground">
-              <MapPin className="size-4 text-gold-deep" aria-hidden />
-              {c.ubicacion ?? "—"}
-            </span>
-            <span className="flex items-center gap-2 text-muted-foreground">
-              <Users className="size-4 text-gold-deep" aria-hidden />
-              {c.numero_personas ? `${c.numero_personas} personas` : "—"}
-            </span>
-            <span className="text-muted-foreground">
-              {c.tipo_evento ?? "—"}
-            </span>
-          </div>
-
-          <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm">
-            {c.email ? (
-              <a
-                href={`mailto:${c.email}`}
-                className="flex items-center gap-2 text-foreground hover:text-gold-deep"
-              >
-                <Mail className="size-4 text-gold-deep" aria-hidden />
-                {c.email}
-              </a>
-            ) : null}
-            {c.telefono ? (
-              <a
-                href={`tel:${c.telefono.replace(/\s/g, "")}`}
-                className="flex items-center gap-2 text-foreground hover:text-gold-deep"
-              >
-                <Phone className="size-4 text-gold-deep" aria-hidden />
-                {c.telefono}
-              </a>
-            ) : null}
-          </div>
-
-          {c.mensaje ? (
-            <p className="rounded-sm bg-bone-alt px-3 py-2 text-sm text-foreground">
-              {c.mensaje}
-            </p>
-          ) : null}
+          </Link>
         </li>
       ))}
     </ul>

@@ -168,6 +168,19 @@ export async function listCotizacionesAdmin(): Promise<CotizacionRow[]> {
   return data ?? [];
 }
 
+/** Una cotización por id (admin). */
+export async function getCotizacionAdmin(
+  id: string,
+): Promise<CotizacionRow | null> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("cotizaciones")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  return data;
+}
+
 /** Conteos para el dashboard del panel. */
 export async function getResumenAdmin() {
   const supabase = await createClient();

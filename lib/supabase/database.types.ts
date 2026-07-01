@@ -72,12 +72,14 @@ export type Database = {
           id: string;
           mensaje: string | null;
           nombre: string;
+          notas: string | null;
           numero_personas: number | null;
           origen: string | null;
           segmento: Database["public"]["Enums"]["segmento"] | null;
           telefono: string | null;
           tipo_evento: string | null;
           ubicacion: string | null;
+          updated_at: string;
         };
         Insert: {
           created_at?: string;
@@ -88,12 +90,14 @@ export type Database = {
           id?: string;
           mensaje?: string | null;
           nombre: string;
+          notas?: string | null;
           numero_personas?: number | null;
           origen?: string | null;
           segmento?: Database["public"]["Enums"]["segmento"] | null;
           telefono?: string | null;
           tipo_evento?: string | null;
           ubicacion?: string | null;
+          updated_at?: string;
         };
         Update: {
           created_at?: string;
@@ -104,12 +108,14 @@ export type Database = {
           id?: string;
           mensaje?: string | null;
           nombre?: string;
+          notas?: string | null;
           numero_personas?: number | null;
           origen?: string | null;
           segmento?: Database["public"]["Enums"]["segmento"] | null;
           telefono?: string | null;
           tipo_evento?: string | null;
           ubicacion?: string | null;
+          updated_at?: string;
         };
         Relationships: [];
       };
