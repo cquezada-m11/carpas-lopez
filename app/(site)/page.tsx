@@ -78,7 +78,7 @@ export default async function HomePage() {
               sizes="100vw"
               className="object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/75 to-ink/40" />
+            <div className="absolute inset-0 bg-gradient-to-r from-ink/85 via-ink/55 to-ink/25" />
           </>
         ) : null}
         <div className="relative mx-auto flex w-full max-w-5xl flex-col justify-center px-5 py-20 md:px-8">
