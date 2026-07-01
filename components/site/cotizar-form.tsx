@@ -314,7 +314,7 @@ export function CotizarForm({ whatsapp }: { whatsapp: string | null }) {
       </div>
 
       {/* Paso 2 — Contacto */}
-      <div className="flex flex-col gap-5 border-t border-border pt-8">
+      <div className="mt-3 flex flex-col gap-5 border-t border-border pt-10">
         <GroupHeader step="2" title="Cómo te contactamos" />
 
         <div className="grid gap-5 sm:grid-cols-2">
