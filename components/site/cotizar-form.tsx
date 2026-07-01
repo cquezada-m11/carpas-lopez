@@ -119,7 +119,6 @@ export function CotizarForm({ whatsapp }: { whatsapp: string | null }) {
   );
   useOverlayPending(pending);
   const fe = state.fieldErrors ?? {};
-  const wa = whatsapp ? `https://wa.me/${whatsapp.replace(/\D/g, "")}` : null;
 
   const [tipo, setTipo] = useState("");
   const [otro, setOtro] = useState("");
@@ -143,6 +142,27 @@ export function CotizarForm({ whatsapp }: { whatsapp: string | null }) {
   const err = (name: string) => errors[name] || fe[name];
 
   if (state.ok) {
+    const detalleUrl =
+      state.token && typeof window !== "undefined"
+        ? `${window.location.origin}/cotizacion/${state.token}`
+        : null;
+    const r = state.resumen;
+    const waMsg = [
+      r
+        ? `Hola, soy ${r.nombre}. Acabo de enviar una solicitud de cotización en Carpas López:`
+        : "Hola, acabo de enviar una solicitud de cotización en Carpas López.",
+      r ? `• Evento: ${r.tipo_evento}` : "",
+      r ? `• Fecha: ${r.fecha}` : "",
+      r ? `• Ubicación: ${r.ubicacion}` : "",
+      r ? `• Personas: ${r.numero_personas}` : "",
+      detalleUrl ? `\nDetalle de mi solicitud: ${detalleUrl}` : "",
+    ]
+      .filter(Boolean)
+      .join("\n");
+    const waHref = whatsapp
+      ? `https://wa.me/${whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(waMsg)}`
+      : null;
+
     return (
       <div className="flex flex-col items-start gap-4 rounded-2xl border border-gold/40 bg-gold/10 p-6 md:p-8">
         <span className="flex size-12 items-center justify-center rounded-full bg-gold text-ink-deep">
@@ -156,13 +176,20 @@ export function CotizarForm({ whatsapp }: { whatsapp: string | null }) {
           formal —con factura y detalle de montaje— tras coordinar la visita a
           terreno. Si quieres adelantar detalles, escríbenos por WhatsApp.
         </p>
-        {wa ? (
-          <Button asChild variant="gold">
-            <Link href={wa} target="_blank" rel="noreferrer">
-              <MessageCircle className="size-4" /> Escríbenos por WhatsApp
-            </Link>
-          </Button>
-        ) : null}
+        <div className="flex flex-wrap gap-3">
+          {waHref ? (
+            <Button asChild variant="gold">
+              <Link href={waHref} target="_blank" rel="noreferrer">
+                <MessageCircle className="size-4" /> Escríbenos por WhatsApp
+              </Link>
+            </Button>
+          ) : null}
+          {detalleUrl ? (
+            <Button asChild variant="outline">
+              <Link href={detalleUrl}>Ver mi solicitud</Link>
+            </Button>
+          ) : null}
+        </div>
       </div>
     );
   }

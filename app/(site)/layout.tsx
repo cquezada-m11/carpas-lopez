@@ -18,7 +18,13 @@ export default function SiteLayout({
         Saltar al contenido
       </a>
       <LocalBusinessJsonLd />
-      <SiteHeader />
+      <Suspense
+        fallback={
+          <div className="fixed top-0 z-50 h-16 w-full border-b border-border bg-bone/90 backdrop-blur md:h-20" />
+        }
+      >
+        <SiteHeader />
+      </Suspense>
       <main id="contenido" className="flex-1 pt-16 md:pt-20">
         {children}
       </main>

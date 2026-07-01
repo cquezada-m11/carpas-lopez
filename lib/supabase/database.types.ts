@@ -112,6 +112,7 @@ export type Database = {
           segmento: Database["public"]["Enums"]["segmento"] | null;
           telefono: string | null;
           tipo_evento: string | null;
+          token: string;
           ubicacion: string | null;
           updated_at: string;
         };
@@ -129,6 +130,7 @@ export type Database = {
           segmento?: Database["public"]["Enums"]["segmento"] | null;
           telefono?: string | null;
           tipo_evento?: string | null;
+          token?: string;
           ubicacion?: string | null;
           updated_at?: string;
         };
@@ -146,6 +148,7 @@ export type Database = {
           segmento?: Database["public"]["Enums"]["segmento"] | null;
           telefono?: string | null;
           tipo_evento?: string | null;
+          token?: string;
           ubicacion?: string | null;
           updated_at?: string;
         };

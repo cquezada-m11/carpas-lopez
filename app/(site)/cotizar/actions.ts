@@ -1,13 +1,28 @@
 "use server";
 
+import { randomUUID } from "node:crypto";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { formatFechaCorta } from "@/lib/content/format";
+
+/** Resumen que devolvemos al cliente tras enviar, para armar el mensaje de
+ *  WhatsApp y enlazar al detalle público. */
+export type CotizarResumen = {
+  nombre: string;
+  tipo_evento: string;
+  fecha: string;
+  ubicacion: string;
+  numero_personas: number;
+};
 
 export type CotizarState = {
   ok?: boolean;
   error?: string;
   fieldErrors?: Record<string, string>;
+  /** Token del detalle público de la cotización recién creada. */
+  token?: string;
+  resumen?: CotizarResumen;
 };
 
 /** Rangos válidos para la fecha aproximada del evento (local, no exportar:
@@ -161,6 +176,10 @@ export async function enviarCotizacion(
   const lead = parsed.data!;
   const supabase = await createClient();
 
+  // Generamos el token en la app (no leemos de vuelta: el anónimo puede
+  // insertar pero no leer por RLS) para poder devolverlo al cliente.
+  const token = randomUUID();
+
   // Insert sin .select(): el visitante anónimo puede insertar pero no leer (RLS).
   const { error } = await supabase.from("cotizaciones").insert({
     tipo_evento: lead.tipo_evento,
@@ -174,6 +193,7 @@ export async function enviarCotizacion(
     mensaje: lead.mensaje,
     segmento: lead.segmento,
     origen: "formulario-web",
+    token,
   });
 
   if (error) {
@@ -187,11 +207,21 @@ export async function enviarCotizacion(
     .select("destino_leads")
     .eq("id", 1)
     .maybeSingle();
-  await notificarLead(
-    lead,
-    fecha_evento ?? fecha_rango ?? "—",
-    config?.destino_leads ?? null,
-  );
+  const fechaDisplay = fecha_evento
+    ? (formatFechaCorta(fecha_evento) ?? fecha_evento)
+    : (fecha_rango ?? "Por definir");
 
-  return { ok: true };
+  await notificarLead(lead, fechaDisplay, config?.destino_leads ?? null);
+
+  return {
+    ok: true,
+    token,
+    resumen: {
+      nombre: lead.nombre,
+      tipo_evento: lead.tipo_evento,
+      fecha: fechaDisplay,
+      ubicacion: lead.ubicacion,
+      numero_personas: lead.numero_personas,
+    },
+  };
 }
