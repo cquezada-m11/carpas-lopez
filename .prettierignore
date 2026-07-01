@@ -4,6 +4,8 @@ node_modules
 out
 build
 next-env.d.ts
+# Next.js reescribe el `include` de tsconfig en cada build; que lo maneje Next.
+tsconfig.json
 
 # Lockfiles
 package-lock.json
