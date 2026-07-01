@@ -6,6 +6,7 @@ import { getServicioAdmin } from "@/lib/content/admin";
 import { ServicioForm } from "@/components/admin/servicio-form";
 import { DeleteServicioButton } from "@/components/admin/delete-servicio-button";
 import { EstadoBadge } from "@/components/admin/estado-badge";
+import { AdminPanel } from "@/components/admin/admin-panel";
 
 export default function EditarServicioPage({
   params,
@@ -25,7 +26,7 @@ async function Editor({ params }: { params: Promise<{ id: string }> }) {
   if (!servicio) notFound();
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-3">
         <Link
           href="/admin/servicios"
@@ -43,10 +44,9 @@ async function Editor({ params }: { params: Promise<{ id: string }> }) {
 
       <ServicioForm servicio={servicio} />
 
-      <section className="flex flex-col gap-3 border-t border-border pt-6">
-        <h2 className="font-serif text-base font-bold">Zona de peligro</h2>
+      <AdminPanel eyebrow="Cuidado" title="Zona de peligro">
         <DeleteServicioButton id={servicio.id} />
-      </section>
+      </AdminPanel>
     </div>
   );
 }

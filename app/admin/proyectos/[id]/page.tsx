@@ -8,6 +8,7 @@ import { ProyectoForm } from "@/components/admin/proyecto-form";
 import { GalleryManager } from "@/components/admin/gallery-manager";
 import { DeleteProyectoButton } from "@/components/admin/delete-proyecto-button";
 import { EstadoBadge } from "@/components/admin/estado-badge";
+import { AdminPanel } from "@/components/admin/admin-panel";
 
 export default function EditarProyectoPage({
   params,
@@ -29,7 +30,7 @@ async function Editor({ params }: { params: Promise<{ id: string }> }) {
   const galeria = galeriaItems(proyecto.galeria);
 
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-3">
         <Link
           href="/admin/proyectos"
@@ -54,32 +55,23 @@ async function Editor({ params }: { params: Promise<{ id: string }> }) {
         </div>
       </div>
 
-      <section className="flex flex-col gap-4">
-        <div>
-          <h2 className="font-serif text-heading font-bold">Galería</h2>
-          <p className="text-sm text-muted-foreground">
-            Arrastra para reordenar. La portada se usa en las tarjetas; si no
-            eliges una, se usa la primera.
-          </p>
-        </div>
+      <AdminPanel
+        eyebrow="Fotos"
+        title="Galería"
+        description="Arrastra para reordenar. La portada se usa en las tarjetas; si no eliges una, se usa la primera."
+      >
         <GalleryManager
           proyectoId={proyecto.id}
           initial={galeria}
           initialPortada={proyecto.imagen_portada_path}
         />
-      </section>
+      </AdminPanel>
 
-      <section className="flex flex-col gap-4">
-        <h2 className="font-serif text-heading font-bold">
-          Datos del proyecto
-        </h2>
-        <ProyectoForm proyecto={proyecto} />
-      </section>
+      <ProyectoForm proyecto={proyecto} />
 
-      <section className="flex flex-col gap-3 border-t border-border pt-6">
-        <h2 className="font-serif text-base font-bold">Zona de peligro</h2>
+      <AdminPanel eyebrow="Cuidado" title="Zona de peligro">
         <DeleteProyectoButton id={proyecto.id} />
-      </section>
+      </AdminPanel>
     </div>
   );
 }

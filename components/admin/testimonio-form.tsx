@@ -1,12 +1,13 @@
 "use client";
 
 import { useActionState } from "react";
-import { AlertCircle, CheckCircle2 } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
+import { AdminPanel } from "@/components/admin/admin-panel";
+import { AdminSaveBar } from "@/components/admin/admin-save-bar";
 import { SEGMENTOS, segmentoLabel } from "@/lib/content/segmento";
 import {
   updateTestimonio,
@@ -42,97 +43,90 @@ export function TestimonioForm({ testimonio }: { testimonio: TestimonioRow }) {
   return (
     <form action={formAction} className="flex flex-col gap-6">
       {state.error ? (
-        <p className="flex items-center gap-2 rounded-sm border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        <p className="flex items-center gap-2 rounded-xl border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
           <AlertCircle className="size-4 shrink-0" aria-hidden />
           {state.error}
         </p>
       ) : null}
-      {state.ok ? (
-        <p className="flex items-center gap-2 rounded-sm border border-gold/40 bg-gold/10 px-3 py-2 text-sm text-gold-deep">
-          <CheckCircle2 className="size-4 shrink-0" aria-hidden />
-          Cambios guardados.
-        </p>
-      ) : null}
 
-      <Field label="Testimonio" htmlFor="texto">
-        <Textarea
-          id="texto"
-          name="texto"
-          rows={4}
-          defaultValue={testimonio.texto}
-        />
-      </Field>
-
-      <div className="grid gap-6 sm:grid-cols-2">
-        <Field label="Autor" htmlFor="autor">
-          <Input
-            id="autor"
-            name="autor"
-            defaultValue={testimonio.autor}
-            required
+      <AdminPanel
+        eyebrow="Prueba social"
+        title="Testimonio"
+        description="Cita de un cliente para la sección de testimonios del home."
+      >
+        <Field label="Testimonio" htmlFor="texto">
+          <Textarea
+            id="texto"
+            name="texto"
+            rows={4}
+            defaultValue={testimonio.texto}
           />
         </Field>
-        <Field label="Cargo" htmlFor="cargo">
-          <Input
-            id="cargo"
-            name="cargo"
-            defaultValue={testimonio.cargo ?? ""}
-            placeholder="Productora, novios, encargado…"
-          />
-        </Field>
-      </div>
 
-      <div className="grid gap-6 sm:grid-cols-2">
-        <Field label="Empresa / organización" htmlFor="empresa">
-          <Input
-            id="empresa"
-            name="empresa"
-            defaultValue={testimonio.empresa ?? ""}
-          />
-        </Field>
-        <Field label="Segmento" htmlFor="segmento">
-          <Select
-            id="segmento"
-            name="segmento"
-            defaultValue={testimonio.segmento ?? ""}
-          >
-            <option value="">Sin segmento</option>
-            {SEGMENTOS.map((s) => (
-              <option key={s} value={s}>
-                {segmentoLabel[s]}
-              </option>
-            ))}
-          </Select>
-        </Field>
-      </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Autor" htmlFor="autor">
+            <Input
+              id="autor"
+              name="autor"
+              defaultValue={testimonio.autor}
+              required
+            />
+          </Field>
+          <Field label="Cargo" htmlFor="cargo">
+            <Input
+              id="cargo"
+              name="cargo"
+              defaultValue={testimonio.cargo ?? ""}
+              placeholder="Productora, novios, encargado…"
+            />
+          </Field>
+          <Field label="Empresa / organización" htmlFor="empresa">
+            <Input
+              id="empresa"
+              name="empresa"
+              defaultValue={testimonio.empresa ?? ""}
+            />
+          </Field>
+          <Field label="Segmento" htmlFor="segmento">
+            <Select
+              id="segmento"
+              name="segmento"
+              defaultValue={testimonio.segmento ?? ""}
+            >
+              <option value="">Sin segmento</option>
+              {SEGMENTOS.map((s) => (
+                <option key={s} value={s}>
+                  {segmentoLabel[s]}
+                </option>
+              ))}
+            </Select>
+          </Field>
+          <Field label="Estado" htmlFor="estado">
+            <Select id="estado" name="estado" defaultValue={testimonio.estado}>
+              {ESTADOS.map((e) => (
+                <option key={e} value={e}>
+                  {e}
+                </option>
+              ))}
+            </Select>
+          </Field>
+          <Field label="Orden" htmlFor="orden">
+            <Input
+              id="orden"
+              name="orden"
+              type="number"
+              min={0}
+              defaultValue={testimonio.orden}
+            />
+          </Field>
+        </div>
+      </AdminPanel>
 
-      <div className="grid gap-6 sm:grid-cols-2">
-        <Field label="Estado" htmlFor="estado">
-          <Select id="estado" name="estado" defaultValue={testimonio.estado}>
-            {ESTADOS.map((e) => (
-              <option key={e} value={e}>
-                {e}
-              </option>
-            ))}
-          </Select>
-        </Field>
-        <Field label="Orden" htmlFor="orden">
-          <Input
-            id="orden"
-            name="orden"
-            type="number"
-            min={0}
-            defaultValue={testimonio.orden}
-            className="max-w-32"
-          />
-        </Field>
-      </div>
-
-      <div className="flex items-center justify-end gap-3 border-t border-border pt-4">
-        <Button type="submit" disabled={pending}>
-          {pending ? "Guardando…" : "Guardar cambios"}
-        </Button>
-      </div>
+      <AdminSaveBar
+        ok={state.ok}
+        pending={pending}
+        label="Datos del testimonio."
+      />
     </form>
   );
 }

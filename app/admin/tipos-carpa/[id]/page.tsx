@@ -6,6 +6,7 @@ import { getTipoCarpaAdmin } from "@/lib/content/admin";
 import { TipoCarpaForm } from "@/components/admin/tipo-carpa-form";
 import { DeleteTipoCarpaButton } from "@/components/admin/delete-tipo-carpa-button";
 import { EstadoBadge } from "@/components/admin/estado-badge";
+import { AdminPanel } from "@/components/admin/admin-panel";
 
 export default function EditarTipoCarpaPage({
   params,
@@ -25,7 +26,7 @@ async function Editor({ params }: { params: Promise<{ id: string }> }) {
   if (!tipo) notFound();
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-3">
         <Link
           href="/admin/tipos-carpa"
@@ -43,10 +44,9 @@ async function Editor({ params }: { params: Promise<{ id: string }> }) {
 
       <TipoCarpaForm tipo={tipo} />
 
-      <section className="flex flex-col gap-3 border-t border-border pt-6">
-        <h2 className="font-serif text-base font-bold">Zona de peligro</h2>
+      <AdminPanel eyebrow="Cuidado" title="Zona de peligro">
         <DeleteTipoCarpaButton id={tipo.id} />
-      </section>
+      </AdminPanel>
     </div>
   );
 }
