@@ -16,6 +16,19 @@ export type CotizarResumen = {
   numero_personas: number;
 };
 
+/** Valores tal cual los envió el usuario, para repoblar el formulario si hay
+ *  error (React 19 resetea los inputs no controlados tras un form action). */
+export type CotizarValues = Record<
+  | "numero_personas"
+  | "ubicacion"
+  | "nombre"
+  | "email"
+  | "telefono"
+  | "mensaje"
+  | "segmento",
+  string
+>;
+
 export type CotizarState = {
   ok?: boolean;
   error?: string;
@@ -23,6 +36,8 @@ export type CotizarState = {
   /** Token del detalle público de la cotización recién creada. */
   token?: string;
   resumen?: CotizarResumen;
+  /** Se devuelve en cada error para no perder lo escrito. */
+  values?: CotizarValues;
 };
 
 /** Rangos válidos para la fecha aproximada del evento (local, no exportar:
@@ -137,6 +152,17 @@ export async function enviarCotizacion(
     return v === "" ? null : v;
   };
 
+  // Snapshot de lo escrito para repoblar el form ante cualquier error.
+  const values: CotizarValues = {
+    numero_personas: str("numero_personas"),
+    ubicacion: str("ubicacion"),
+    nombre: str("nombre"),
+    email: str("email"),
+    telefono: str("telefono"),
+    mensaje: str("mensaje"),
+    segmento: str("segmento"),
+  };
+
   // Fecha: exacta (YYYY-MM-DD) o rango aproximado.
   const fechaExacta = str("fecha_evento");
   const fechaRangoRaw = str("fecha_rango");
@@ -170,7 +196,7 @@ export async function enviarCotizacion(
     fieldErrors.fecha_evento = "Indica cuándo será el evento";
   }
   if (Object.keys(fieldErrors).length > 0) {
-    return { error: "Revisa los campos marcados.", fieldErrors };
+    return { error: "Revisa los campos marcados.", fieldErrors, values };
   }
 
   const lead = parsed.data!;
@@ -199,6 +225,7 @@ export async function enviarCotizacion(
   if (error) {
     return {
       error: "No pudimos registrar tu solicitud. Inténtalo nuevamente.",
+      values,
     };
   }
 

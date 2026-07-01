@@ -119,6 +119,9 @@ export function CotizarForm({ whatsapp }: { whatsapp: string | null }) {
   );
   useOverlayPending(pending);
   const fe = state.fieldErrors ?? {};
+  // Valores devueltos por el servidor tras un error: React 19 resetea el form
+  // al terminar el action, y el reset restaura estos defaultValue.
+  const v = state.values;
 
   const [tipo, setTipo] = useState("");
   const [otro, setOtro] = useState("");
@@ -311,6 +314,7 @@ export function CotizarForm({ whatsapp }: { whatsapp: string | null }) {
               inputMode="numeric"
               min={1}
               placeholder="120"
+              defaultValue={v?.numero_personas}
               onBlur={onBlur}
             />
           </Field>
@@ -323,13 +327,18 @@ export function CotizarForm({ whatsapp }: { whatsapp: string | null }) {
               id="ubicacion"
               name="ubicacion"
               placeholder="Comuna, región"
+              defaultValue={v?.ubicacion}
               onBlur={onBlur}
             />
           </Field>
         </div>
 
         <Field label="Segmento (opcional)" htmlFor="segmento">
-          <Select id="segmento" name="segmento" defaultValue="">
+          <Select
+            id="segmento"
+            name="segmento"
+            defaultValue={v?.segmento ?? ""}
+          >
             <option value="">Selecciona…</option>
             {SEGMENTOS.map((s) => (
               <option key={s} value={s}>
@@ -350,6 +359,7 @@ export function CotizarForm({ whatsapp }: { whatsapp: string | null }) {
               id="nombre"
               name="nombre"
               autoComplete="name"
+              defaultValue={v?.nombre}
               onBlur={onBlur}
             />
           </Field>
@@ -359,13 +369,20 @@ export function CotizarForm({ whatsapp }: { whatsapp: string | null }) {
               name="email"
               type="email"
               autoComplete="email"
+              defaultValue={v?.email}
               onBlur={onBlur}
             />
           </Field>
         </div>
 
         <Field label="Teléfono (opcional)" htmlFor="telefono">
-          <Input id="telefono" name="telefono" type="tel" autoComplete="tel" />
+          <Input
+            id="telefono"
+            name="telefono"
+            type="tel"
+            autoComplete="tel"
+            defaultValue={v?.telefono}
+          />
         </Field>
 
         <Field label="Cuéntanos más (opcional)" htmlFor="mensaje">
@@ -374,6 +391,7 @@ export function CotizarForm({ whatsapp }: { whatsapp: string | null }) {
             name="mensaje"
             rows={4}
             placeholder="Detalles del montaje, horarios, requerimientos…"
+            defaultValue={v?.mensaje}
           />
         </Field>
       </div>
