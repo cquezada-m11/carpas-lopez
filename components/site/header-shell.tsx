@@ -52,7 +52,7 @@ export function HeaderShell({
         "fixed top-0 z-50 w-full transition-colors duration-300",
         transparent
           ? "bg-transparent"
-          : "border-b border-border bg-bone/90 backdrop-blur supports-[backdrop-filter]:bg-bone/75",
+          : "border-b border-border bg-bone/90 backdrop-blur",
       )}
     >
       <div className="mx-auto flex h-16 w-full max-w-5xl items-center justify-between px-5 md:h-20 md:px-8">
