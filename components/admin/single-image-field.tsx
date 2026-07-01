@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Upload, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { mediaUrl } from "@/lib/content/media";
+import { UrlImageImport } from "@/components/admin/url-image-import";
 
 /**
  * Campo de imagen única: sube a Storage y guarda el path.
@@ -91,6 +92,7 @@ export function SingleImageField({
           onChange={(e) => onFile(e.target.files?.[0])}
         />
       </label>
+      <UrlImageImport folder={folder} onImported={setPath} />
       {error ? <p className="text-xs text-destructive">{error}</p> : null}
     </div>
   );

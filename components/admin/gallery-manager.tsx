@@ -6,6 +6,7 @@ import { GripVertical, Star, Trash2, Upload } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { mediaUrl, type GalleryItem } from "@/lib/content/media";
 import { saveGaleria } from "@/app/admin/proyectos/actions";
+import { UrlImageImport } from "@/components/admin/url-image-import";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -126,6 +127,14 @@ export function GalleryManager({
           </Button>
         </div>
       </div>
+
+      <UrlImageImport
+        folder={`proyectos/${proyectoId}`}
+        onImported={(path) => {
+          setItems((prev) => [...prev, { path, alt: "" }]);
+          setDirty(true);
+        }}
+      />
 
       {msg ? <p className="text-sm text-muted-foreground">{msg}</p> : null}
 
