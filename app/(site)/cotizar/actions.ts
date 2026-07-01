@@ -10,8 +10,9 @@ export type CotizarState = {
   fieldErrors?: Record<string, string>;
 };
 
-/** Rangos válidos para la fecha aproximada del evento. */
-export const RANGOS_FECHA = [
+/** Rangos válidos para la fecha aproximada del evento (local, no exportar:
+ *  un archivo "use server" solo puede exportar funciones async). */
+const RANGOS_FECHA = [
   "Esta semana",
   "Este mes",
   "Próximo mes",
