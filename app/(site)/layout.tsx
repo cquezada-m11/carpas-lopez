@@ -19,7 +19,7 @@ export default function SiteLayout({
       </a>
       <LocalBusinessJsonLd />
       <SiteHeader />
-      <main id="contenido" className="flex-1">
+      <main id="contenido" className="flex-1 pt-16 md:pt-20">
         {children}
       </main>
       <SiteFooter />

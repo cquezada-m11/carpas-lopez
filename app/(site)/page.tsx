@@ -66,8 +66,8 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* S2 — Hero (alto completo del viewport, menos el header sticky) */}
-      <section className="on-dark relative flex min-h-[calc(100svh-4rem)] overflow-hidden border-b border-gold/20 bg-ink text-bone md:min-h-[calc(100svh-5rem)]">
+      {/* S2 — Hero (pantalla completa, detrás del header transparente) */}
+      <section className="on-dark relative -mt-16 flex min-h-[100svh] overflow-hidden border-b border-gold/20 bg-ink text-bone md:-mt-20">
         {heroMedia ? (
           <>
             <Image
