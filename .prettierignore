@@ -13,6 +13,9 @@ package-lock.json
 # Diseño y referencias (no formatear)
 docs/
 
+# Plantillas de correo: HTML sensible al whitespace inline, no reflow.
+supabase/templates/*.html
+
 # Misc
 *.min.js
 .vercel

@@ -233,10 +233,32 @@ otp_expiry = 3600
 # admin_email = "admin@email.com"
 # sender_name = "Admin"
 
-# Uncomment to customize email template
-# [auth.email.template.invite]
-# subject = "You have been invited"
-# content_path = "./supabase/templates/invite.html"
+# Plantillas de correo con branding de Carpas López (aplican en Supabase local;
+# para el proyecto remoto se pegan en Dashboard → Authentication → Emails).
+# Ver supabase/templates/README.md.
+[auth.email.template.invite]
+subject = "Te invitamos a administrar Carpas López"
+content_path = "./supabase/templates/invite.html"
+
+[auth.email.template.confirmation]
+subject = "Confirma tu cuenta · Carpas López"
+content_path = "./supabase/templates/confirmation.html"
+
+[auth.email.template.recovery]
+subject = "Restablece tu contraseña · Carpas López"
+content_path = "./supabase/templates/recovery.html"
+
+[auth.email.template.magic_link]
+subject = "Tu enlace de acceso · Carpas López"
+content_path = "./supabase/templates/magic_link.html"
+
+[auth.email.template.email_change]
+subject = "Confirma tu nuevo correo · Carpas López"
+content_path = "./supabase/templates/email_change.html"
+
+[auth.email.template.reauthentication]
+subject = "Tu código de verificación · Carpas López"
+content_path = "./supabase/templates/reauthentication.html"
 
 # Uncomment to customize notification email template
 # [auth.email.notification.password_changed]
