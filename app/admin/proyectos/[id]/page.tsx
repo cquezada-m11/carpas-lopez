@@ -3,10 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { getProyectoAdmin } from "@/lib/content/admin";
+import { deleteProyecto } from "@/app/admin/proyectos/actions";
 import { galeriaItems } from "@/lib/content/media";
 import { ProyectoForm } from "@/components/admin/proyecto-form";
 import { GalleryManager } from "@/components/admin/gallery-manager";
-import { DeleteProyectoButton } from "@/components/admin/delete-proyecto-button";
+import { AdminDeleteSection } from "@/components/admin/admin-delete-section";
 import { EstadoBadge } from "@/components/admin/estado-badge";
 import { AdminPanel } from "@/components/admin/admin-panel";
 
@@ -69,9 +70,10 @@ async function Editor({ params }: { params: Promise<{ id: string }> }) {
 
       <ProyectoForm proyecto={proyecto} />
 
-      <AdminPanel eyebrow="Cuidado" title="Zona de peligro">
-        <DeleteProyectoButton id={proyecto.id} />
-      </AdminPanel>
+      <AdminDeleteSection
+        action={deleteProyecto.bind(null, proyecto.id)}
+        entidad="proyecto"
+      />
     </div>
   );
 }

@@ -3,10 +3,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { getTestimonioAdmin } from "@/lib/content/admin";
+import { deleteTestimonio } from "@/app/admin/testimonios/actions";
 import { TestimonioForm } from "@/components/admin/testimonio-form";
-import { DeleteTestimonioButton } from "@/components/admin/delete-testimonio-button";
+import { AdminDeleteSection } from "@/components/admin/admin-delete-section";
 import { EstadoBadge } from "@/components/admin/estado-badge";
-import { AdminPanel } from "@/components/admin/admin-panel";
 
 export default function EditarTestimonioPage({
   params,
@@ -44,9 +44,10 @@ async function Editor({ params }: { params: Promise<{ id: string }> }) {
 
       <TestimonioForm testimonio={testimonio} />
 
-      <AdminPanel eyebrow="Cuidado" title="Zona de peligro">
-        <DeleteTestimonioButton id={testimonio.id} />
-      </AdminPanel>
+      <AdminDeleteSection
+        action={deleteTestimonio.bind(null, testimonio.id)}
+        entidad="testimonio"
+      />
     </div>
   );
 }

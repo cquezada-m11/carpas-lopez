@@ -3,10 +3,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { getServicioAdmin } from "@/lib/content/admin";
+import { deleteServicio } from "@/app/admin/servicios/actions";
 import { ServicioForm } from "@/components/admin/servicio-form";
-import { DeleteServicioButton } from "@/components/admin/delete-servicio-button";
+import { AdminDeleteSection } from "@/components/admin/admin-delete-section";
 import { EstadoBadge } from "@/components/admin/estado-badge";
-import { AdminPanel } from "@/components/admin/admin-panel";
 
 export default function EditarServicioPage({
   params,
@@ -44,9 +44,10 @@ async function Editor({ params }: { params: Promise<{ id: string }> }) {
 
       <ServicioForm servicio={servicio} />
 
-      <AdminPanel eyebrow="Cuidado" title="Zona de peligro">
-        <DeleteServicioButton id={servicio.id} />
-      </AdminPanel>
+      <AdminDeleteSection
+        action={deleteServicio.bind(null, servicio.id)}
+        entidad="servicio"
+      />
     </div>
   );
 }

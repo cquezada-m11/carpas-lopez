@@ -3,10 +3,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { getTipoCarpaAdmin } from "@/lib/content/admin";
+import { deleteTipoCarpa } from "@/app/admin/tipos-carpa/actions";
 import { TipoCarpaForm } from "@/components/admin/tipo-carpa-form";
-import { DeleteTipoCarpaButton } from "@/components/admin/delete-tipo-carpa-button";
+import { AdminDeleteSection } from "@/components/admin/admin-delete-section";
 import { EstadoBadge } from "@/components/admin/estado-badge";
-import { AdminPanel } from "@/components/admin/admin-panel";
 
 export default function EditarTipoCarpaPage({
   params,
@@ -44,9 +44,10 @@ async function Editor({ params }: { params: Promise<{ id: string }> }) {
 
       <TipoCarpaForm tipo={tipo} />
 
-      <AdminPanel eyebrow="Cuidado" title="Zona de peligro">
-        <DeleteTipoCarpaButton id={tipo.id} />
-      </AdminPanel>
+      <AdminDeleteSection
+        action={deleteTipoCarpa.bind(null, tipo.id)}
+        entidad="tipo de carpa"
+      />
     </div>
   );
 }
