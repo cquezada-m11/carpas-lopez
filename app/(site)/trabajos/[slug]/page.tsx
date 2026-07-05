@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -12,17 +13,16 @@ import {
 import {
   getProyectoPorSlug,
   getProyectosRelacionados,
-  getSlugsPublicados,
   type Proyecto,
 } from "@/lib/content/queries";
 import { coverUrl, galeriaItems, mediaUrl } from "@/lib/content/media";
 import { segmentoLabel } from "@/lib/content/segmento";
 import { formatFechaLarga } from "@/lib/content/format";
 
-export async function generateStaticParams() {
-  const slugs = await getSlugsPublicados();
-  return slugs.map((slug) => ({ slug }));
-}
+// Sin generateStaticParams: la ruta se renderiza on-demand y las lecturas
+// (`getProyectoPorSlug`, cacheadas con "use cache") se sirven desde caché. Así
+// el build no depende de que existan proyectos publicados (portafolio vacío =
+// build OK), evitando EmptyGenerateStaticParamsError con Cache Components.
 
 export async function generateMetadata({
   params,
@@ -74,7 +74,25 @@ function fichaTecnica(p: Proyecto): { label: string; value: string }[] {
   );
 }
 
-export default async function ProyectoPage({
+export default function ProyectoPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  return (
+    <Suspense
+      fallback={
+        <Section tone="bone">
+          <p className="text-muted-foreground">Cargando…</p>
+        </Section>
+      }
+    >
+      <ProyectoDetalle params={params} />
+    </Suspense>
+  );
+}
+
+async function ProyectoDetalle({
   params,
 }: {
   params: Promise<{ slug: string }>;
