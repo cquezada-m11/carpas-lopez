@@ -16,7 +16,7 @@ export async function AuthLogo() {
     >
       {logo ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={logo} alt={nombre} className="h-12 w-auto md:h-14" />
+        <img src={logo} alt={nombre} className="h-20 w-auto md:h-24" />
       ) : (
         <span className="font-serif text-2xl font-bold text-foreground">
           {nombre}
