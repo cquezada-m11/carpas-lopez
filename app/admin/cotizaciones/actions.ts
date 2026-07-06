@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { isEstadoLead } from "@/lib/content/lead-estado";
 
@@ -48,4 +49,24 @@ export async function deleteNotaCotizacion(
   await supabase.from("cotizacion_notas").delete().eq("id", notaId);
   revalidatePath(`/admin/cotizaciones/${cotizacionId}`);
   revalidatePath("/admin/cotizaciones");
+}
+
+/** Soft delete: archiva la cotización (no borra la fila) y vuelve al listado. */
+export async function softDeleteCotizacion(id: string) {
+  const supabase = await createClient();
+  await supabase
+    .from("cotizaciones")
+    .update({ deleted_at: new Date().toISOString() })
+    .eq("id", id);
+  revalidatePath("/admin/cotizaciones");
+  revalidatePath(`/admin/cotizaciones/${id}`);
+  redirect("/admin/cotizaciones");
+}
+
+/** Restaura una cotización archivada. */
+export async function restoreCotizacion(id: string) {
+  const supabase = await createClient();
+  await supabase.from("cotizaciones").update({ deleted_at: null }).eq("id", id);
+  revalidatePath("/admin/cotizaciones");
+  revalidatePath(`/admin/cotizaciones/${id}`);
 }

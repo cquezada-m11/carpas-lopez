@@ -100,6 +100,7 @@ export type Database = {
       cotizaciones: {
         Row: {
           created_at: string;
+          deleted_at: string | null;
           email: string | null;
           estado: string;
           fecha_evento: string | null;
@@ -118,6 +119,7 @@ export type Database = {
         };
         Insert: {
           created_at?: string;
+          deleted_at?: string | null;
           email?: string | null;
           estado?: string;
           fecha_evento?: string | null;
@@ -136,6 +138,7 @@ export type Database = {
         };
         Update: {
           created_at?: string;
+          deleted_at?: string | null;
           email?: string | null;
           estado?: string;
           fecha_evento?: string | null;

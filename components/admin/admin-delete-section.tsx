@@ -5,26 +5,43 @@ import { useFormStatus } from "react-dom";
 import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-function ConfirmButton() {
+function ConfirmButton({
+  label,
+  pendingLabel,
+}: {
+  label: string;
+  pendingLabel: string;
+}) {
   const { pending } = useFormStatus();
   return (
     <Button type="submit" variant="destructive" size="sm" disabled={pending}>
-      {pending ? "Eliminando…" : "Sí, eliminar"}
+      {pending ? pendingLabel : label}
     </Button>
   );
 }
 
 /**
- * Bloque de eliminación para las páginas de edición del admin. Confirmación
- * inline en dos pasos (sin `window.confirm`) y estilo destructivo sobrio.
- * Recibe el server action ya enlazado al id.
+ * Bloque de eliminación para el admin. Confirmación inline en dos pasos (sin
+ * `window.confirm`) y estilo destructivo sobrio. Recibe el server action ya
+ * enlazado al id. Los textos son configurables para reusarlo como "archivar"
+ * (soft delete) sin cambiar el patrón.
  */
 export function AdminDeleteSection({
   action,
   entidad,
+  titulo,
+  descripcion = "Se quita de forma permanente. Esta acción no se puede deshacer.",
+  accionLabel = "Eliminar",
+  confirmLabel = "Sí, eliminar",
+  pendingLabel = "Eliminando…",
 }: {
   action: () => void | Promise<void>;
   entidad: string;
+  titulo?: string;
+  descripcion?: string;
+  accionLabel?: string;
+  confirmLabel?: string;
+  pendingLabel?: string;
 }) {
   const [confirming, setConfirming] = useState(false);
 
@@ -36,17 +53,15 @@ export function AdminDeleteSection({
         </span>
         <div className="flex flex-col gap-0.5">
           <h2 className="font-serif text-base font-bold text-foreground">
-            Eliminar {entidad}
+            {titulo ?? `Eliminar ${entidad}`}
           </h2>
-          <p className="text-sm text-muted-foreground">
-            Se quita de forma permanente. Esta acción no se puede deshacer.
-          </p>
+          <p className="text-sm text-muted-foreground">{descripcion}</p>
         </div>
       </div>
 
       {confirming ? (
         <form action={action} className="flex items-center gap-2">
-          <ConfirmButton />
+          <ConfirmButton label={confirmLabel} pendingLabel={pendingLabel} />
           <Button
             type="button"
             variant="ghost"
@@ -64,7 +79,7 @@ export function AdminDeleteSection({
           className="border-destructive/40 text-destructive hover:bg-destructive/10"
           onClick={() => setConfirming(true)}
         >
-          <Trash2 className="size-4" /> Eliminar
+          <Trash2 className="size-4" /> {accionLabel}
         </Button>
       )}
     </section>

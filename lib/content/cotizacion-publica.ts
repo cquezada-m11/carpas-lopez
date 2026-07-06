@@ -33,6 +33,7 @@ export async function getCotizacionPublica(
       "nombre, tipo_evento, fecha_evento, fecha_rango, ubicacion, numero_personas, segmento, mensaje, estado, created_at",
     )
     .eq("token", token)
+    .is("deleted_at", null)
     .maybeSingle();
   return data;
 }

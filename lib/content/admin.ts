@@ -161,14 +161,21 @@ export async function getHomeAdmin(): Promise<HomeRow | null> {
   return data;
 }
 
-/** Cotizaciones recibidas (admin), recientes primero, con flag de notas. */
-export async function listCotizacionesAdmin(): Promise<CotizacionListItem[]> {
+/** Cotizaciones recibidas (admin), recientes primero, con flag de notas.
+ *  Por defecto excluye las archivadas (soft delete); `archivadas: true` las
+ *  devuelve para la vista de restauración. */
+export async function listCotizacionesAdmin(opts?: {
+  archivadas?: boolean;
+}): Promise<CotizacionListItem[]> {
   const supabase = await createClient();
+  const base = supabase
+    .from("cotizaciones")
+    .select("*")
+    .order("created_at", { ascending: false });
   const [rows, notas] = await Promise.all([
-    supabase
-      .from("cotizaciones")
-      .select("*")
-      .order("created_at", { ascending: false }),
+    opts?.archivadas
+      ? base.not("deleted_at", "is", null)
+      : base.is("deleted_at", null),
     supabase.from("cotizacion_notas").select("cotizacion_id"),
   ]);
   const conNotas = new Set((notas.data ?? []).map((n) => n.cotizacion_id));
@@ -176,6 +183,16 @@ export async function listCotizacionesAdmin(): Promise<CotizacionListItem[]> {
     ...r,
     tieneNotas: conNotas.has(r.id),
   }));
+}
+
+/** Cuántas cotizaciones están archivadas (soft-deleted). */
+export async function countCotizacionesArchivadas(): Promise<number> {
+  const supabase = await createClient();
+  const { count } = await supabase
+    .from("cotizaciones")
+    .select("*", { count: "exact", head: true })
+    .not("deleted_at", "is", null);
+  return count ?? 0;
 }
 
 /** Una cotización por id (admin). */
@@ -214,7 +231,10 @@ export async function getResumenAdmin() {
       .select("*", { count: "exact", head: true })
       .eq("estado", "publicado"),
     supabase.from("servicios").select("*", { count: "exact", head: true }),
-    supabase.from("cotizaciones").select("*", { count: "exact", head: true }),
+    supabase
+      .from("cotizaciones")
+      .select("*", { count: "exact", head: true })
+      .is("deleted_at", null),
   ]);
   return {
     proyectos: proyectos.count ?? 0,

@@ -11,12 +11,18 @@ import {
   MessageCircle,
   Clock,
   Tag,
+  RotateCcw,
 } from "lucide-react";
 import { getCotizacionAdmin, getNotasCotizacion } from "@/lib/content/admin";
 import { AdminPanel } from "@/components/admin/admin-panel";
+import { AdminDeleteSection } from "@/components/admin/admin-delete-section";
 import { EstadoLeadSelect } from "@/components/admin/estado-lead-select";
 import { AddNotaForm } from "@/components/admin/add-nota-form";
-import { deleteNotaCotizacion } from "@/app/admin/cotizaciones/actions";
+import {
+  deleteNotaCotizacion,
+  softDeleteCotizacion,
+  restoreCotizacion,
+} from "@/app/admin/cotizaciones/actions";
 import { Button } from "@/components/ui/button";
 import { segmentoLabel, isSegmento } from "@/lib/content/segmento";
 import { formatFechaCorta, formatFechaHora } from "@/lib/content/format";
@@ -84,6 +90,11 @@ async function Detalle({ params }: { params: Promise<{ id: string }> }) {
           <span className="rounded-full bg-bone-alt px-2.5 py-0.5 font-mono text-eyebrow uppercase text-gold-deep">
             {c.estado}
           </span>
+          {c.deleted_at ? (
+            <span className="rounded-full bg-destructive/10 px-2.5 py-0.5 font-mono text-eyebrow uppercase text-destructive">
+              Archivada
+            </span>
+          ) : null}
           <span className="text-xs text-muted-foreground">
             Recibido {formatFechaHora(c.created_at)} · {c.origen ?? "—"}
           </span>
@@ -238,6 +249,40 @@ async function Detalle({ params }: { params: Promise<{ id: string }> }) {
           </AdminPanel>
         </aside>
       </div>
+
+      {c.deleted_at ? (
+        <section className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-border bg-card p-5 shadow-card md:p-6">
+          <div className="flex items-start gap-3">
+            <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full bg-bone-alt text-gold-deep">
+              <RotateCcw className="size-4" aria-hidden />
+            </span>
+            <div className="flex flex-col gap-0.5">
+              <h2 className="font-serif text-base font-bold text-foreground">
+                Cotización archivada
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Archivada el {formatFechaHora(c.deleted_at)}. Restáurala para
+                que vuelva al listado.
+              </p>
+            </div>
+          </div>
+          <form action={restoreCotizacion.bind(null, c.id)}>
+            <Button type="submit" variant="outline" size="sm">
+              <RotateCcw className="size-4" /> Restaurar
+            </Button>
+          </form>
+        </section>
+      ) : (
+        <AdminDeleteSection
+          action={softDeleteCotizacion.bind(null, c.id)}
+          entidad="cotización"
+          titulo="Archivar cotización"
+          descripcion="La quitamos del listado. Puedes restaurarla cuando quieras."
+          accionLabel="Archivar"
+          confirmLabel="Sí, archivar"
+          pendingLabel="Archivando…"
+        />
+      )}
     </div>
   );
 }
