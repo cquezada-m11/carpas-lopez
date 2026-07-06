@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Section, SectionHeading } from "@/components/ds";
 import { ProjectCard } from "@/components/site/project-card";
+import { Reveal } from "@/components/ui/reveal";
 import { SegmentFilter } from "@/components/site/segment-filter";
 import { getProyectosPublicados } from "@/lib/content/queries";
 import { isSegmento } from "@/lib/content/segmento";
@@ -49,8 +50,10 @@ async function Listado({
       <SegmentFilter active={activo} />
       {proyectos.length > 0 ? (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {proyectos.map((proyecto) => (
-            <ProjectCard key={proyecto.id} proyecto={proyecto} />
+          {proyectos.map((proyecto, i) => (
+            <Reveal key={proyecto.id} delay={(i % 3) * 70} className="h-full">
+              <ProjectCard proyecto={proyecto} />
+            </Reveal>
           ))}
         </div>
       ) : (

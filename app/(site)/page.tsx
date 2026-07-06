@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Reveal } from "@/components/ui/reveal";
 import {
   Eyebrow,
   Section,
@@ -81,7 +82,7 @@ export default async function HomePage() {
             <div className="absolute inset-0 bg-gradient-to-r from-ink/85 via-ink/55 to-ink/25" />
           </>
         ) : null}
-        <div className="relative mx-auto flex w-full max-w-5xl flex-col justify-center px-5 py-20 md:px-8">
+        <div className="relative mx-auto flex w-full max-w-5xl flex-col justify-center px-5 py-20 duration-700 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-4 md:px-8">
           <Eyebrow tone="light">Arriendo · diseño · montaje de carpas</Eyebrow>
           <h1 className="mt-5 max-w-3xl text-balance font-serif text-display font-bold">
             {home?.hero_titulo ??
@@ -127,7 +128,9 @@ export default async function HomePage() {
         </SectionHeading>
         <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {servicios.map((servicio, i) => (
-            <ServiceCard key={servicio.id} servicio={servicio} indice={i + 1} />
+            <Reveal key={servicio.id} delay={i * 70} className="h-full">
+              <ServiceCard servicio={servicio} indice={i + 1} />
+            </Reveal>
           ))}
         </div>
       </Section>
@@ -220,8 +223,10 @@ export default async function HomePage() {
         </div>
         {destacados.length > 0 ? (
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {destacados.map((proyecto) => (
-              <ProjectCard key={proyecto.id} proyecto={proyecto} />
+            {destacados.map((proyecto, i) => (
+              <Reveal key={proyecto.id} delay={(i % 3) * 70} className="h-full">
+                <ProjectCard proyecto={proyecto} />
+              </Reveal>
             ))}
           </div>
         ) : (

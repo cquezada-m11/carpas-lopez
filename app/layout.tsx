@@ -46,6 +46,14 @@ export default function RootLayout({
   return (
     <html lang="es-CL" className={`${serif.variable} ${sans.variable}`}>
       <body className="min-h-screen bg-bone-dark">
+        <noscript>
+          <style
+            dangerouslySetInnerHTML={{
+              __html:
+                "[data-reveal]{opacity:1 !important;transform:none !important}",
+            }}
+          />
+        </noscript>
         <LoadingOverlayProvider>{children}</LoadingOverlayProvider>
       </body>
     </html>

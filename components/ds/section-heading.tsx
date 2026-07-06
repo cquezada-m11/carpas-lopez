@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { Reveal } from "@/components/ui/reveal";
 import { Eyebrow } from "./eyebrow";
 
 /**
@@ -19,13 +20,13 @@ export function SectionHeading({
   as?: "h1" | "h2" | "h3";
 }) {
   return (
-    <div className={cn("flex flex-col gap-3", className)}>
+    <Reveal className={cn("flex flex-col gap-3", className)}>
       {eyebrow ? (
         <Eyebrow tone={tone === "dark" ? "light" : "gold"}>{eyebrow}</Eyebrow>
       ) : null}
       <Tag className="text-balance font-serif text-heading-lg font-bold">
         {children}
       </Tag>
-    </div>
+    </Reveal>
   );
 }
