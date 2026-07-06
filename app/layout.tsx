@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Libre_Caslon_Text, Manrope } from "next/font/google";
 import { siteUrl } from "@/lib/site";
 import { LoadingOverlayProvider } from "@/components/site/loading-overlay";
+import { AuthRecoveryHandler } from "@/components/auth/auth-recovery-handler";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -54,6 +55,7 @@ export default function RootLayout({
             }}
           />
         </noscript>
+        <AuthRecoveryHandler />
         <LoadingOverlayProvider>{children}</LoadingOverlayProvider>
       </body>
     </html>
