@@ -46,7 +46,7 @@ export default function AdminLayout({
 
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-5 py-8 md:flex-row md:px-8">
         <aside className="w-full shrink-0 md:w-56">
-          <Suspense fallback={<div className="h-64" />}>
+          <Suspense fallback={<div className="h-12 md:h-64" />}>
             <AdminSidebar />
           </Suspense>
         </aside>
