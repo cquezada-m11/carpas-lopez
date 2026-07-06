@@ -7,24 +7,20 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const token_hash = searchParams.get("token_hash");
   const type = searchParams.get("type") as EmailOtpType | null;
-  const next = searchParams.get("next") ?? "/";
+  // Solo rutas internas: evita open redirects hacia dominios externos.
+  const nextParam = searchParams.get("next") ?? "/";
+  const next =
+    nextParam.startsWith("/") && !nextParam.startsWith("//") ? nextParam : "/";
 
   if (token_hash && type) {
     const supabase = await createClient();
-
-    const { error } = await supabase.auth.verifyOtp({
-      type,
-      token_hash,
-    });
+    const { error } = await supabase.auth.verifyOtp({ type, token_hash });
     if (!error) {
-      // redirect user to specified redirect URL or root of app
+      // La sesión quedó en cookie (verifyOtp server-side); vamos al destino.
       redirect(next);
-    } else {
-      // redirect the user to an error page with some instructions
-      redirect(`/auth/error?error=${error?.message}`);
     }
+    redirect(`/auth/error?error=${encodeURIComponent(error.message)}`);
   }
 
-  // redirect the user to an error page with some instructions
-  redirect(`/auth/error?error=No token hash or type`);
+  redirect(`/auth/error?error=${encodeURIComponent("Enlace inválido")}`);
 }
