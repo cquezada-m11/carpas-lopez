@@ -199,6 +199,69 @@ export type Database = {
         };
         Relationships: [];
       };
+      presupuestos: {
+        Row: {
+          cotizacion_id: string | null;
+          created_at: string;
+          created_by: string | null;
+          deleted_at: string | null;
+          estado: string;
+          id: string;
+          numero: string;
+        };
+        Insert: {
+          cotizacion_id?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          deleted_at?: string | null;
+          estado?: string;
+          id?: string;
+          numero?: string;
+        };
+        Update: {
+          cotizacion_id?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          deleted_at?: string | null;
+          estado?: string;
+          id?: string;
+          numero?: string;
+        };
+        Relationships: [];
+      };
+      presupuesto_versiones: {
+        Row: {
+          autor: string | null;
+          contenido: Json;
+          created_at: string;
+          created_by: string | null;
+          id: string;
+          nota: string | null;
+          presupuesto_id: string;
+          version: number;
+        };
+        Insert: {
+          autor?: string | null;
+          contenido: Json;
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          nota?: string | null;
+          presupuesto_id: string;
+          version: number;
+        };
+        Update: {
+          autor?: string | null;
+          contenido?: Json;
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          nota?: string | null;
+          presupuesto_id?: string;
+          version?: number;
+        };
+        Relationships: [];
+      };
       proyectos: {
         Row: {
           capacidad_personas: number | null;

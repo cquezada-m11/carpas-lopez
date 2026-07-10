@@ -12,8 +12,10 @@ import {
   Clock,
   Tag,
   RotateCcw,
+  FileText,
 } from "lucide-react";
 import { getCotizacionAdmin, getNotasCotizacion } from "@/lib/content/admin";
+import { crearDesdeCotizacion } from "@/app/admin/presupuestos/actions";
 import { AdminPanel } from "@/components/admin/admin-panel";
 import { AdminDeleteSection } from "@/components/admin/admin-delete-section";
 import { EstadoLeadSelect } from "@/components/admin/estado-lead-select";
@@ -191,6 +193,18 @@ async function Detalle({ params }: { params: Promise<{ id: string }> }) {
         </div>
 
         <aside className="flex flex-col gap-6">
+          <AdminPanel eyebrow="Documento" title="Presupuesto">
+            <form action={crearDesdeCotizacion.bind(null, c.id)}>
+              <Button type="submit" variant="gold" size="sm">
+                <FileText className="size-4" /> Emitir presupuesto
+              </Button>
+            </form>
+            <p className="text-xs text-muted-foreground">
+              Crea un presupuesto con el cliente y la fecha del evento
+              precargados.
+            </p>
+          </AdminPanel>
+
           <AdminPanel eyebrow="Gestión" title="Estado">
             <EstadoLeadSelect id={c.id} estado={c.estado} />
             <p className="text-xs text-muted-foreground">
