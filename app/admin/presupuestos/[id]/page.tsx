@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, History } from "lucide-react";
+import { ArrowLeft, History, FileDown } from "lucide-react";
 import {
   getPresupuestoConVersion,
   getVersionesPresupuesto,
@@ -10,6 +10,7 @@ import { softDeletePresupuesto } from "@/app/admin/presupuestos/actions";
 import { PresupuestoForm } from "@/components/admin/presupuesto-form";
 import { AdminPanel } from "@/components/admin/admin-panel";
 import { AdminDeleteSection } from "@/components/admin/admin-delete-section";
+import { Button } from "@/components/ui/button";
 import { formatFechaHora } from "@/lib/content/format";
 
 export default function PresupuestoDetallePage({
@@ -57,6 +58,17 @@ async function Editor({ params }: { params: Promise<{ id: string }> }) {
             >
               Ver cotización
             </Link>
+          ) : null}
+          {version > 0 ? (
+            <Button asChild variant="outline" size="sm" className="ml-auto">
+              <a
+                href={`/admin/presupuestos/${presupuesto.id}/pdf`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <FileDown className="size-4" /> Descargar PDF
+              </a>
+            </Button>
           ) : null}
         </div>
       </div>
