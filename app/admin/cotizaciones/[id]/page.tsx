@@ -15,6 +15,8 @@ import {
   FileText,
 } from "lucide-react";
 import { getCotizacionAdmin, getNotasCotizacion } from "@/lib/content/admin";
+import { listPresupuestos } from "@/lib/content/presupuestos";
+import { formatCLP } from "@/lib/content/presupuesto";
 import { crearDesdeCotizacion } from "@/app/admin/presupuestos/actions";
 import { AdminPanel } from "@/components/admin/admin-panel";
 import { AdminDeleteSection } from "@/components/admin/admin-delete-section";
@@ -63,9 +65,10 @@ function InfoRow({
 
 async function Detalle({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [c, notas] = await Promise.all([
+  const [c, notas, presupuestos] = await Promise.all([
     getCotizacionAdmin(id),
     getNotasCotizacion(id),
+    listPresupuestos({ cotizacionId: id }),
   ]);
   if (!c) notFound();
 
@@ -193,16 +196,44 @@ async function Detalle({ params }: { params: Promise<{ id: string }> }) {
         </div>
 
         <aside className="flex flex-col gap-6">
-          <AdminPanel eyebrow="Documento" title="Presupuesto">
+          <AdminPanel
+            eyebrow="Documento"
+            title={presupuestos.length > 0 ? "Presupuestos" : "Presupuesto"}
+          >
+            {presupuestos.length > 0 ? (
+              <ul className="flex flex-col divide-y divide-border overflow-hidden rounded-xl border border-border">
+                {presupuestos.map((p) => (
+                  <li key={p.id}>
+                    <Link
+                      href={`/admin/presupuestos/${p.id}`}
+                      className="flex items-center justify-between gap-3 px-3 py-2.5 transition-colors hover:bg-foreground/5"
+                    >
+                      <span className="flex flex-col">
+                        <span className="font-mono text-sm font-semibold text-foreground">
+                          {p.numero}
+                        </span>
+                        <span className="font-mono text-[10px] uppercase text-gold-deep">
+                          {p.estado}
+                        </span>
+                      </span>
+                      <span className="font-serif text-sm font-bold text-foreground">
+                        {formatCLP(p.total)}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                Aún no hay presupuestos para esta cotización.
+              </p>
+            )}
             <form action={crearDesdeCotizacion.bind(null, c.id)}>
               <Button type="submit" variant="gold" size="sm">
-                <FileText className="size-4" /> Emitir presupuesto
+                <FileText className="size-4" />
+                {presupuestos.length > 0 ? "Emitir otro" : "Emitir presupuesto"}
               </Button>
             </form>
-            <p className="text-xs text-muted-foreground">
-              Crea un presupuesto con el cliente y la fecha del evento
-              precargados.
-            </p>
           </AdminPanel>
 
           <AdminPanel eyebrow="Gestión" title="Estado">

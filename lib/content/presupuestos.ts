@@ -17,14 +17,19 @@ export type PresupuestoListItem = PresupuestoRow & {
 };
 
 /** Presupuestos (no archivados), recientes primero, con cliente y total de la
- *  última versión. */
-export async function listPresupuestos(): Promise<PresupuestoListItem[]> {
+ *  última versión. Con `cotizacionId` filtra los ligados a esa cotización. */
+export async function listPresupuestos(opts?: {
+  cotizacionId?: string;
+}): Promise<PresupuestoListItem[]> {
   const supabase = await createClient();
-  const { data: presus } = await supabase
+  const base = supabase
     .from("presupuestos")
     .select("*")
     .is("deleted_at", null)
     .order("created_at", { ascending: false });
+  const { data: presus } = await (opts?.cotizacionId
+    ? base.eq("cotizacion_id", opts.cotizacionId)
+    : base);
   if (!presus?.length) return [];
 
   const { data: versiones } = await supabase
