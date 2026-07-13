@@ -70,18 +70,26 @@ export default async function HomePage() {
       {/* S2 — Hero (pantalla completa, detrás del header transparente) */}
       <section className="on-dark relative -mt-16 flex min-h-[100svh] overflow-hidden border-b border-gold/20 bg-ink text-bone md:-mt-20">
         {heroMedia ? (
-          <>
-            <Image
-              src={heroMedia}
-              alt=""
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-ink/85 via-ink/55 to-ink/25" />
-          </>
-        ) : null}
+          <Image
+            src={heroMedia}
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+        ) : (
+          <video
+            className="absolute inset-0 size-full object-cover"
+            src="/background.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            aria-hidden
+          />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-r from-ink/85 via-ink/55 to-ink/25" />
         <div className="relative mx-auto flex w-full max-w-5xl flex-col justify-center px-5 py-20 duration-700 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-4 md:px-8">
           <Eyebrow tone="light">Arriendo · diseño · montaje de carpas</Eyebrow>
           <h1 className="mt-5 max-w-3xl text-balance font-serif text-display font-bold">
